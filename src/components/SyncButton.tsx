@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { useTrackers } from "../context/TrackersContext";
 import { GitHubUser } from "../services/githubSync";
 
@@ -140,9 +141,11 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
           title="GitHub account menu"
         >
           {user?.avatar_url ? (
-            <img
+            <Image
               src={user.avatar_url}
               alt={user.login}
+              width={24}
+              height={24}
               className="w-6 h-6 rounded-full"
             />
           ) : (
@@ -181,9 +184,11 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
           <div className="p-4 border-b border-gray-100">
             <div className="flex items-center gap-3">
               {user?.avatar_url && (
-                <img
+                <Image
                   src={user.avatar_url}
                   alt={user.login}
+                  width={40}
+                  height={40}
                   className="w-10 h-10 rounded-full"
                 />
               )}
