@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Task, Note } from "../types";
+import { Task } from "../types";
 
 interface ReflectionModalProps {
   task: Task;
@@ -99,7 +99,9 @@ export default function ReflectionModal({
             {task.mindset && (
               <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                 <h3 className="font-semibold text-black mb-2">Mindset:</h3>
-                <p className="text-sm text-gray-700 italic">"{task.mindset}"</p>
+                <p className="text-sm text-gray-700 italic">
+                  &ldquo;{task.mindset}&rdquo;
+                </p>
               </div>
             )}
 
