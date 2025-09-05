@@ -1,0 +1,417 @@
+{
+  "tracker": {
+    "title": "AI/ML Mastery (Personal)",
+    "description": "Frontend developer transitioning to top-1% AI/ML engineer",
+    "milestones": [
+      {
+        "id": "math-foundations",
+        "title": "Math Foundations",
+        "description": "Build mathematical foundation for understanding ML algorithms",
+        "tasks": [
+          {
+            "title": "Linear Algebra",
+            "effort": 3,
+            "execution": "Complete Khan Academy Linear Algebra course",
+            "mindset": "Think like a matrix: every transformation has meaning",
+            "reflectionPrompts": [
+              "What matrix operations surprised you?",
+              "How does linear algebra connect to ML?"
+            ],
+            "quizIds": ["linear-algebra-1", "linear-algebra-2"],
+            "tags": ["math", "linear-algebra", "foundations"]
+          },
+          {
+            "title": "Probability Basics",
+            "effort": 3,
+            "execution": "Read 'Introduction to Probability' chapters 1-4",
+            "mindset": "Probability is the language of uncertainty",
+            "reflectionPrompts": [
+              "When did probability click for you?",
+              "What's the difference between frequentist and Bayesian?"
+            ],
+            "quizIds": ["probability-1"],
+            "tags": ["math", "probability", "statistics"]
+          },
+          {
+            "title": "Statistics Basics",
+            "effort": 2,
+            "execution": "Complete Statistics 101 course on Coursera",
+            "mindset": "Statistics reveal patterns in chaos",
+            "reflectionPrompts": [
+              "How do you distinguish correlation from causation?",
+              "What statistical tests would you use for different scenarios?"
+            ],
+            "quizIds": ["statistics-1"],
+            "tags": ["math", "statistics", "analysis"]
+          },
+          {
+            "title": "Optimization Intro",
+            "effort": 2,
+            "execution": "Study gradient descent and convex optimization",
+            "mindset": "Optimization is finding the best path to your goal",
+            "reflectionPrompts": [
+              "Why does gradient descent work?",
+              "What makes an optimization problem convex?"
+            ],
+            "quizIds": ["optimization-1"],
+            "tags": ["math", "optimization", "gradient-descent"]
+          }
+        ]
+      },
+      {
+        "id": "ml-core",
+        "title": "ML Core",
+        "description": "Master fundamental machine learning concepts and algorithms",
+        "tasks": [
+          {
+            "title": "Supervised Learning",
+            "effort": 3,
+            "execution": "Implement linear regression from scratch in Python",
+            "mindset": "Supervised learning is pattern recognition with examples",
+            "reflectionPrompts": [
+              "What makes a good training dataset?",
+              "How do you prevent overfitting?"
+            ],
+            "quizIds": ["supervised-1", "supervised-2"],
+            "tags": ["ml", "supervised", "regression"]
+          },
+          {
+            "title": "Regression & Classification",
+            "effort": 3,
+            "execution": "Build both regression and classification models",
+            "mindset": "Regression predicts numbers, classification predicts categories",
+            "reflectionPrompts": [
+              "When would you use logistic regression vs linear regression?",
+              "What's the difference between binary and multiclass classification?"
+            ],
+            "quizIds": ["regression-1", "classification-1"],
+            "tags": ["ml", "regression", "classification"]
+          },
+          {
+            "title": "Model Evaluation",
+            "effort": 2,
+            "execution": "Learn cross-validation, metrics, and model selection",
+            "mindset": "Good evaluation prevents you from fooling yourself",
+            "reflectionPrompts": [
+              "Why is accuracy sometimes misleading?",
+              "How do you choose the right evaluation metric?"
+            ],
+            "quizIds": ["evaluation-1"],
+            "tags": ["ml", "evaluation", "metrics"]
+          },
+          {
+            "title": "Feature Engineering",
+            "effort": 2,
+            "execution": "Practice feature selection and transformation techniques",
+            "mindset": "Features are the foundation of good models",
+            "reflectionPrompts": [
+              "What makes a feature useful vs useless?",
+              "How do you handle missing data?"
+            ],
+            "quizIds": ["features-1"],
+            "tags": ["ml", "features", "preprocessing"]
+          }
+        ]
+      },
+      {
+        "id": "deep-learning",
+        "title": "Deep Learning",
+        "description": "Dive into neural networks and modern deep learning",
+        "tasks": [
+          {
+            "title": "Neural Nets from Scratch",
+            "effort": 3,
+            "execution": "Build a neural network using only NumPy",
+            "mindset": "Neural networks are just mathematical functions with parameters",
+            "reflectionPrompts": [
+              "What happens during backpropagation?",
+              "Why do we need activation functions?"
+            ],
+            "quizIds": ["neural-nets-1", "neural-nets-2"],
+            "tags": ["deep-learning", "neural-networks", "backpropagation"]
+          },
+          {
+            "title": "CNN Basics",
+            "effort": 3,
+            "execution": "Implement CNN for image classification",
+            "mindset": "CNNs see patterns in spatial relationships",
+            "reflectionPrompts": [
+              "How do convolutional layers work?",
+              "What's the purpose of pooling layers?"
+            ],
+            "quizIds": ["cnn-1", "cnn-2"],
+            "tags": ["deep-learning", "cnn", "computer-vision"]
+          },
+          {
+            "title": "Transformers Overview",
+            "effort": 3,
+            "execution": "Study attention mechanism and transformer architecture",
+            "mindset": "Attention is all you need - focus determines understanding",
+            "reflectionPrompts": [
+              "How does self-attention work?",
+              "Why are transformers so powerful for NLP?"
+            ],
+            "quizIds": ["transformers-1", "transformers-2"],
+            "tags": ["deep-learning", "transformers", "attention", "nlp"]
+          }
+        ]
+      },
+      {
+        "id": "medical-ai",
+        "title": "Specialization: Medical AI",
+        "description": "Focus on AI applications in healthcare and medical imaging",
+        "tasks": [
+          {
+            "title": "Medical Imaging Intro",
+            "effort": 3,
+            "execution": "Study DICOM format and medical image preprocessing",
+            "mindset": "Medical images tell stories about human health",
+            "reflectionPrompts": [
+              "What makes medical imaging different from regular computer vision?",
+              "How do you ensure patient privacy in medical AI?"
+            ],
+            "quizIds": ["medical-imaging-1"],
+            "tags": ["medical-ai", "imaging", "dicom", "healthcare"]
+          },
+          {
+            "title": "Segmentation Basics",
+            "effort": 3,
+            "execution": "Implement U-Net for medical image segmentation",
+            "mindset": "Segmentation is pixel-level understanding",
+            "reflectionPrompts": [
+              "What challenges exist in medical image segmentation?",
+              "How do you validate segmentation results?"
+            ],
+            "quizIds": ["segmentation-1", "segmentation-2"],
+            "tags": ["medical-ai", "segmentation", "u-net", "computer-vision"]
+          },
+          {
+            "title": "NLP for Clinical Notes",
+            "effort": 3,
+            "execution": "Build model to extract information from clinical text",
+            "mindset": "Clinical notes contain hidden insights about patient care",
+            "reflectionPrompts": [
+              "What makes clinical text different from regular text?",
+              "How do you handle medical terminology and abbreviations?"
+            ],
+            "quizIds": ["clinical-nlp-1"],
+            "tags": ["medical-ai", "nlp", "clinical-notes", "text-mining"]
+          }
+        ]
+      },
+      {
+        "id": "projects",
+        "title": "Projects",
+        "description": "Build end-to-end AI/ML projects to demonstrate mastery",
+        "tasks": [
+          {
+            "title": "Kaggle Beginner Competition",
+            "effort": 5,
+            "execution": "Complete a Kaggle competition from start to finish",
+            "mindset": "Competitions teach you to solve real problems under pressure",
+            "reflectionPrompts": [
+              "What was your biggest challenge in the competition?",
+              "How did you approach feature engineering?"
+            ],
+            "quizIds": ["kaggle-1"],
+            "tags": ["projects", "kaggle", "competition", "end-to-end"]
+          },
+          {
+            "title": "End-to-end Image Classifier",
+            "effort": 5,
+            "execution": "Build complete image classification pipeline",
+            "mindset": "End-to-end projects reveal the full complexity of ML",
+            "reflectionPrompts": [
+              "What was the most time-consuming part of the pipeline?",
+              "How did you handle data preprocessing and augmentation?"
+            ],
+            "quizIds": ["image-classifier-1"],
+            "tags": ["projects", "computer-vision", "pipeline", "deployment"]
+          },
+          {
+            "title": "Deploy with Next.js UI",
+            "effort": 4,
+            "execution": "Create web interface for your ML model using Next.js",
+            "mindset": "Great models need great interfaces to reach users",
+            "reflectionPrompts": [
+              "How did you handle model inference in the browser?",
+              "What UX considerations did you make for ML predictions?"
+            ],
+            "quizIds": ["deployment-1"],
+            "tags": ["projects", "deployment", "nextjs", "web-ui", "frontend"]
+          }
+        ]
+      }
+    ]
+  },
+  "quizItems": [
+    {
+      "id": "linear-algebra-1",
+      "question": "What is the dot product of two vectors?",
+      "answer": "The sum of the products of corresponding components",
+      "hint": "Think about multiplying each component and adding them up",
+      "tags": ["linear-algebra", "vectors"]
+    },
+    {
+      "id": "linear-algebra-2",
+      "question": "What does matrix multiplication represent geometrically?",
+      "answer": "A linear transformation that combines rotation, scaling, and shearing",
+      "hint": "Matrices transform space in predictable ways",
+      "tags": ["linear-algebra", "matrices", "transformations"]
+    },
+    {
+      "id": "probability-1",
+      "question": "What is Bayes' theorem?",
+      "answer": "P(A|B) = P(B|A) * P(A) / P(B)",
+      "hint": "It updates our beliefs based on new evidence",
+      "tags": ["probability", "bayes", "statistics"]
+    },
+    {
+      "id": "statistics-1",
+      "question": "What's the difference between correlation and causation?",
+      "answer": "Correlation shows relationship, causation shows one causes the other",
+      "hint": "Correlation doesn't imply causation",
+      "tags": ["statistics", "correlation", "causation"]
+    },
+    {
+      "id": "optimization-1",
+      "question": "Why does gradient descent work?",
+      "answer": "It follows the steepest descent direction to find the minimum",
+      "hint": "Think about rolling a ball down a hill",
+      "tags": ["optimization", "gradient-descent", "minimization"]
+    },
+    {
+      "id": "supervised-1",
+      "question": "What is overfitting in machine learning?",
+      "answer": "When a model learns the training data too well and fails on new data",
+      "hint": "The model memorizes instead of generalizing",
+      "tags": ["supervised-learning", "overfitting", "generalization"]
+    },
+    {
+      "id": "supervised-2",
+      "question": "What is the bias-variance tradeoff?",
+      "answer": "The balance between model complexity and generalization ability",
+      "hint": "Simple models have high bias, complex models have high variance",
+      "tags": ["supervised-learning", "bias", "variance", "tradeoff"]
+    },
+    {
+      "id": "regression-1",
+      "question": "When would you use logistic regression?",
+      "answer": "For binary classification problems with linear decision boundaries",
+      "hint": "It outputs probabilities between 0 and 1",
+      "tags": ["regression", "classification", "logistic"]
+    },
+    {
+      "id": "classification-1",
+      "question": "What is the difference between binary and multiclass classification?",
+      "answer": "Binary has 2 classes, multiclass has 3 or more classes",
+      "hint": "Think about email spam (binary) vs image categories (multiclass)",
+      "tags": ["classification", "binary", "multiclass"]
+    },
+    {
+      "id": "evaluation-1",
+      "question": "Why might accuracy be misleading?",
+      "answer": "It doesn't account for class imbalance or different error costs",
+      "hint": "Consider a dataset with 99% of one class",
+      "tags": ["evaluation", "accuracy", "metrics"]
+    },
+    {
+      "id": "features-1",
+      "question": "What makes a feature useful?",
+      "answer": "It has predictive power and is not redundant with other features",
+      "hint": "Good features help the model make better predictions",
+      "tags": ["features", "feature-engineering", "selection"]
+    },
+    {
+      "id": "neural-nets-1",
+      "question": "What happens during backpropagation?",
+      "answer": "Gradients are calculated and propagated backward to update weights",
+      "hint": "It's the chain rule applied to neural networks",
+      "tags": ["neural-networks", "backpropagation", "gradients"]
+    },
+    {
+      "id": "neural-nets-2",
+      "question": "Why do we need activation functions?",
+      "answer": "They introduce non-linearity, allowing networks to learn complex patterns",
+      "hint": "Without them, neural networks would just be linear models",
+      "tags": ["neural-networks", "activation", "non-linearity"]
+    },
+    {
+      "id": "cnn-1",
+      "question": "How do convolutional layers work?",
+      "answer": "They apply filters to detect local patterns like edges and textures",
+      "hint": "Think of them as pattern detectors that slide across the image",
+      "tags": ["cnn", "convolution", "computer-vision"]
+    },
+    {
+      "id": "cnn-2",
+      "question": "What's the purpose of pooling layers?",
+      "answer": "To reduce spatial dimensions and make the network more robust to small translations",
+      "hint": "They summarize local regions of the feature map",
+      "tags": ["cnn", "pooling", "downsampling"]
+    },
+    {
+      "id": "transformers-1",
+      "question": "How does self-attention work?",
+      "answer": "Each position attends to all positions to compute a weighted representation",
+      "hint": "It allows the model to focus on relevant parts of the input",
+      "tags": ["transformers", "attention", "nlp"]
+    },
+    {
+      "id": "transformers-2",
+      "question": "Why are transformers so powerful for NLP?",
+      "answer": "They can capture long-range dependencies and parallelize training",
+      "hint": "Unlike RNNs, they don't have sequential bottlenecks",
+      "tags": ["transformers", "nlp", "long-range-dependencies"]
+    },
+    {
+      "id": "medical-imaging-1",
+      "question": "What makes medical imaging different from regular computer vision?",
+      "answer": "Higher stakes, domain expertise required, regulatory constraints, and specialized data formats",
+      "hint": "Think about the consequences of errors in medical diagnosis",
+      "tags": ["medical-ai", "imaging", "healthcare", "dicom"]
+    },
+    {
+      "id": "segmentation-1",
+      "question": "What challenges exist in medical image segmentation?",
+      "answer": "Low contrast, noise, anatomical variations, and limited labeled data",
+      "hint": "Medical images are often more challenging than natural images",
+      "tags": ["medical-ai", "segmentation", "challenges"]
+    },
+    {
+      "id": "segmentation-2",
+      "question": "How do you validate segmentation results?",
+      "answer": "Using metrics like Dice coefficient, Hausdorff distance, and expert review",
+      "hint": "You need both quantitative and qualitative validation",
+      "tags": ["medical-ai", "segmentation", "validation", "metrics"]
+    },
+    {
+      "id": "clinical-nlp-1",
+      "question": "What makes clinical text different from regular text?",
+      "answer": "Medical terminology, abbreviations, structured formats, and domain-specific language",
+      "hint": "Clinical notes have their own vocabulary and conventions",
+      "tags": ["medical-ai", "nlp", "clinical-notes", "terminology"]
+    },
+    {
+      "id": "kaggle-1",
+      "question": "What's the most important step in a Kaggle competition?",
+      "answer": "Understanding the problem, data exploration, and feature engineering",
+      "hint": "Good feature engineering often beats complex models",
+      "tags": ["kaggle", "competition", "feature-engineering"]
+    },
+    {
+      "id": "image-classifier-1",
+      "question": "What's the most time-consuming part of an image classification pipeline?",
+      "answer": "Data preprocessing, augmentation, and hyperparameter tuning",
+      "hint": "The model training is often the fastest part",
+      "tags": ["projects", "computer-vision", "pipeline", "preprocessing"]
+    },
+    {
+      "id": "deployment-1",
+      "question": "How do you handle model inference in the browser?",
+      "answer": "Use TensorFlow.js, ONNX.js, or convert models to web-compatible formats",
+      "hint": "Browsers have different constraints than servers",
+      "tags": ["deployment", "browser", "tensorflow-js", "onnx"]
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "title": "Learn React Hooks",
+    "desc": "Master the fundamentals of React Hooks including useState, useEffect, and custom hooks",
+    "effort": 3,
+    "tags": ["react", "frontend", "hooks"],
+    "status": "todo",
+    "execution": "Read React documentation on hooks, build a practice app with useState and useEffect",
+    "mindset": "Discipline. Innovation. Adaptability.",
+    "reflectionPrompts": [
+      "What was the most challenging hook to understand?",
+      "How do hooks change the way you think about component state?",
+      "What real-world scenario would benefit from a custom hook?"
+    ]
+  },
+  {
+    "title": "Build Todo App with TypeScript",
+    "desc": "Create a full-featured todo application using React and TypeScript",
+    "effort": 5,
+    "tags": ["typescript", "react", "project"],
+    "status": "todo",
+    "execution": "Set up TypeScript project, implement CRUD operations, add local storage",
+    "mindset": "Precision. Quality. User Experience.",
+    "reflectionPrompts": [
+      "What TypeScript features helped catch errors early?",
+      "How did type safety improve your development experience?",
+      "What would you do differently in the next iteration?"
+    ]
+  },
+  {
+    "title": "Understand Machine Learning Basics",
+    "desc": "Learn fundamental concepts of machine learning and data science",
+    "effort": 4,
+    "tags": ["ml", "data-science", "fundamentals"],
+    "status": "inprogress",
+    "execution": "Complete online course on ML basics, practice with scikit-learn",
+    "mindset": "Curiosity. Patience. Systematic Learning.",
+    "reflectionPrompts": [
+      "What surprised you most about how ML algorithms work?",
+      "How do you see ML applying to your current field?",
+      "What's the difference between supervised and unsupervised learning?"
+    ]
+  },
+  {
+    "title": "Practice Algorithm Problems",
+    "desc": "Solve coding challenges to improve problem-solving skills",
+    "effort": 2,
+    "tags": ["algorithms", "coding", "practice"],
+    "status": "done",
+    "execution": "Solve 5 problems on LeetCode, focus on array and string manipulation",
+    "mindset": "Persistence. Logic. Pattern Recognition.",
+    "notes": [
+      {
+        "at": "2023-10-27T10:00:00.000Z",
+        "text": "Completed first 5 problems, focusing on two-pointer technique",
+        "type": "reflection"
+      }
+    ]
+  },
+  {
+    "title": "Learn Docker Containerization",
+    "desc": "Understand containerization concepts and Docker best practices",
+    "effort": 3,
+    "tags": ["docker", "devops", "containers"],
+    "status": "todo",
+    "execution": "Follow Docker tutorial, containerize a simple web app",
+    "mindset": "Efficiency. Scalability. Modern Development.",
+    "reflectionPrompts": [
+      "How do containers solve the 'it works on my machine' problem?",
+      "What are the key differences between containers and VMs?",
+      "When would you choose Docker over other deployment methods?"
+    ]
+  }
+]
