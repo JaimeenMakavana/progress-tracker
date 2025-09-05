@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Tracker, Task } from "../types";
+import { Tracker } from "../types";
 import {
   calculateProgress,
   getNextTask,
