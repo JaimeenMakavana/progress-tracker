@@ -1,4 +1,4 @@
-import { Tracker, DailySnapshot, Activity } from "../types";
+import { Tracker, DailySnapshot } from "../types";
 
 export interface VelocityStats {
   daily: number;
@@ -187,7 +187,7 @@ export function calculateStreak(tracker: Tracker): number {
   if (activities.length === 0) return 0;
 
   let streak = 0;
-  let currentDate = new Date();
+  const currentDate = new Date();
   currentDate.setHours(0, 0, 0, 0);
 
   for (const activity of activities) {
