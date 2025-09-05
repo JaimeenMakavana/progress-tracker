@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Task } from "../types";
 
@@ -81,7 +81,7 @@ export default function DeepWorkTimer({
     setReflection({ blocked: "", insight: "" });
   };
 
-  const handleSessionComplete = () => {
+  const handleSessionComplete = useCallback(() => {
     setIsActive(false);
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -110,7 +110,7 @@ export default function DeepWorkTimer({
       setTimeLeft(WORK_DURATION * 60);
       onSessionComplete?.(completedSession);
     }
-  };
+  }, [session, isBreak, onSessionComplete]);
 
   const handleReflectionSubmit = () => {
     const completedSession: DeepWorkSession = {
@@ -193,7 +193,7 @@ export default function DeepWorkTimer({
             )}
             {task.mindset && (
               <p className="text-sm text-gray-500 italic mt-1">
-                "{task.mindset}"
+                &ldquo;{task.mindset}&rdquo;
               </p>
             )}
           </div>
@@ -244,7 +244,7 @@ export default function DeepWorkTimer({
         {/* Session Info */}
         <div className="text-center text-sm text-gray-600">
           {isBreak ? (
-            <p>Take a break! You've earned it.</p>
+            <p>Take a break! You&apos;ve earned it.</p>
           ) : (
             <p>Focus on your task. No distractions.</p>
           )}
