@@ -79,7 +79,9 @@ export function migrateState(oldState: unknown): MigrationResult {
     // Unknown version
     return {
       success: false,
-      error: `Unknown version: ${oldState.appMeta?.version || "unknown"}`,
+      error: `Unknown version: ${
+        (oldState as AppState).appMeta?.version || "unknown"
+      }`,
     };
   } catch (error) {
     return {
