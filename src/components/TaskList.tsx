@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Task } from "../types";
-import { getTasksByStatus } from "../utils/progress";
 import TaskItem from "./TaskItem";
 
 interface TaskListProps {
@@ -25,9 +24,11 @@ export default function TaskList({
   >(filter);
 
   const allTasks = Object.values(tasks);
-  const todoTasks = getTasksByStatus({ tasks } as any, "todo");
-  const inProgressTasks = getTasksByStatus({ tasks } as any, "inprogress");
-  const doneTasks = getTasksByStatus({ tasks } as any, "done");
+  const todoTasks = allTasks.filter((task) => task.status === "todo");
+  const inProgressTasks = allTasks.filter(
+    (task) => task.status === "inprogress"
+  );
+  const doneTasks = allTasks.filter((task) => task.status === "done");
 
   const getFilteredTasks = () => {
     switch (activeFilter) {
