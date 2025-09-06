@@ -24,6 +24,7 @@ export function migrateState(oldState: unknown): MigrationResult {
           lastUpdated: new Date().toISOString(),
         },
         trackers: (oldState as AppState).trackers || {},
+        trackerGroups: (oldState as AppState).trackerGroups || {},
         snapshots: [],
         quizItems: {},
       };
@@ -102,6 +103,7 @@ export function loadDefaultRoadmap(): AppState {
       lastUpdated: new Date().toISOString(),
     },
     trackers: {},
+    trackerGroups: {},
     snapshots: [],
     quizItems: {},
   };

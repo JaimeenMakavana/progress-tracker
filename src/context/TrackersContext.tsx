@@ -609,7 +609,8 @@ export function TrackersProvider({ children }: { children: React.ReactNode }) {
       };
     });
 
-    const { [id]: _, ...remainingGroups } = state.trackerGroups;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { [id]: _removed, ...remainingGroups } = state.trackerGroups;
 
     const newState = {
       ...state,

@@ -77,7 +77,7 @@ export default function ContentBlock({
       case "heading":
         const HeadingTag = `h${
           block.metadata?.level || 2
-        }` as keyof JSX.IntrinsicElements;
+        }` as keyof React.JSX.IntrinsicElements;
         return (
           <HeadingTag
             className={`font-bold text-gray-900 ${

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { LayoutDashboard, Receipt, Target } from "lucide-react";
 
 interface NavigationItem {
   name: string;
@@ -12,50 +13,55 @@ interface NavigationItem {
 
 const navigationItems: NavigationItem[] = [
   {
+    name: "Trackers",
+    href: "/tracker",
+    icon: <Target className="w-7 h-7" strokeWidth={1.5} />,
+  },
+  {
     name: "Dashboard",
     href: "/",
-    icon: (
-      <svg
-        className="w-5 h-5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
-        />
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"
-        />
-      </svg>
-    ),
+    icon: <LayoutDashboard className="w-6 h-6" strokeWidth={1} />,
   },
   {
     name: "Expenses",
     href: "/expenses",
-    icon: (
-      <svg
-        className="w-5 h-5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-        />
-      </svg>
-    ),
+    icon: <Receipt className="w-6 h-6" strokeWidth={1} />,
   },
 ];
+
+// Tooltip component for desktop navigation
+const Tooltip = ({
+  children,
+  content,
+}: {
+  children: React.ReactNode;
+  content: string;
+}) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setIsVisible(true)}
+      onMouseLeave={() => setIsVisible(false)}
+    >
+      {children}
+      {isVisible && (
+        <motion.div
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -10 }}
+          className="absolute left-full ml-3 top-1/2 transform -translate-y-1/2 z-[100] pointer-events-none"
+        >
+          <div className="bg-black text-white text-sm font-medium px-3 py-2 rounded-lg shadow-lg whitespace-nowrap">
+            {content}
+            <div className="absolute right-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-black"></div>
+          </div>
+        </motion.div>
+      )}
+    </div>
+  );
+};
 
 export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -72,32 +78,28 @@ export default function Navigation() {
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="hidden lg:flex items-center justify-between w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">P</span>
-          </div>
-          <span className="text-xl font-bold text-black">Progress OS</span>
-        </Link>
-
-        {/* Desktop Menu */}
-        <div className="flex items-center space-x-8">
+      <nav className="hidden lg:flex lg:flex-col w-16 bg-black h-full rounded-lg">
+        {/* Navigation Items */}
+        <div className="flex-1 flex flex-col items-center justify-center space-y-4">
           {navigationItems.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
-                  isActive
-                    ? "bg-primary text-white"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-black"
-                }`}
-              >
-                {item.icon}
-                <span className="font-medium">{item.name}</span>
-              </Link>
+              <Tooltip key={item.name} content={item.name}>
+                <Link
+                  href={item.href}
+                  className={`rounded-lg transition-all duration-200 `}
+                >
+                  <div
+                    className={`w-6 h-6 ${
+                      isActive
+                        ? "text-white font-bold"
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    {item.icon}
+                  </div>
+                </Link>
+              </Tooltip>
             );
           })}
         </div>

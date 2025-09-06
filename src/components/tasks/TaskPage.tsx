@@ -185,7 +185,7 @@ export default function TaskPage({
                     Start building your knowledge
                   </h3>
                   <p className="text-gray-600 mb-6">
-                    This is your personal space for "{task.title}". Add
+                    This is your personal space for &ldquo;{task.title}&rdquo;. Add
                     thoughts, code snippets, links, and insights as you learn.
                   </p>
                 </div>
@@ -388,7 +388,7 @@ export default function TaskPage({
                     onClick={() => setEditingBlockId(blocks[0]?.id || null)}
                   >
                     <p className="text-gray-500 text-sm">
-                      Type your first thoughts about "{task.title}"...
+                      Type your first thoughts about &ldquo;{task.title}&rdquo;...
                     </p>
                   </div>
                 </div>

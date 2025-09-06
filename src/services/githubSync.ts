@@ -235,6 +235,7 @@ class GitHubSyncService {
         lastUpdated: new Date().toISOString(),
       },
       trackers: {},
+      trackerGroups: {},
       snapshots: [],
       quizItems: {},
     };

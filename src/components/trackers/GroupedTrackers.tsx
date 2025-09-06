@@ -1,9 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Tracker, TrackerGroup } from "../../types";
-import { ProgressStats } from "../../utils/progress";
-import TrackerCard from "./TrackerCard";
+import { Tracker, TrackerGroup, ProgressStats } from "../../types";
+import TrackerCardGrid from "./TrackerCard";
 
 interface GroupedTrackersProps {
   trackers: Record<string, Tracker>;
@@ -163,7 +162,7 @@ export default function GroupedTrackers({
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {groupTrackers.map((tracker) => (
-                      <TrackerCard
+                      <TrackerCardGrid
                         key={tracker.id}
                         tracker={tracker}
                         group={group}
@@ -201,7 +200,7 @@ export default function GroupedTrackers({
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {groupedTrackers.ungrouped.map((tracker) => (
-              <TrackerCard
+              <TrackerCardGrid
                 key={tracker.id}
                 tracker={tracker}
                 progress={getProgress(tracker)}

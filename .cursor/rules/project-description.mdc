@@ -7,3 +7,5 @@ alwaysApply: true
 This project is for my personal use only.
 Problem i am solving this project : discipline for me , 10x productivity
 must-have : features which will bring discipline for me
+icon : from lucide library
+state: local, zustand, for api react-query

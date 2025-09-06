@@ -28,12 +28,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-dvh`}
       >
         <TrackersProvider>
           <TransactionsProvider>
-            <Navigation />
-            {children}
+            <div className="h-dvh flex p-4 bg-gray-50">
+              <Navigation />
+              <div className="h-full flex-1 overflow-y-auto ">{children}</div>
+            </div>
           </TransactionsProvider>
         </TrackersProvider>
       </body>

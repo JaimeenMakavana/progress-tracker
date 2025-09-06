@@ -40,6 +40,29 @@ export default function DeepWorkTimer({
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<Date | null>(null);
 
+  const handleSessionComplete = useCallback(() => {
+    setIsActive(false);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    if (session) {
+      const endTime = new Date();
+      const duration = Math.floor(
+        (endTime.getTime() - new Date(session.startTime).getTime()) / 1000
+      );
+
+      const completedSession = {
+        ...session,
+        endTime: endTime.toISOString(),
+        duration,
+      };
+
+      setSession(completedSession);
+      setShowReflection(true);
+    }
+  }, [session]);
+
   useEffect(() => {
     if (isActive && timeLeft > 0) {
       intervalRef.current = setInterval(() => {
@@ -54,7 +77,7 @@ export default function DeepWorkTimer({
         clearInterval(intervalRef.current);
       }
     };
-  }, [isActive, timeLeft]);
+  }, [isActive, timeLeft, handleSessionComplete]);
 
   const startTimer = () => {
     setIsActive(true);
@@ -81,36 +104,6 @@ export default function DeepWorkTimer({
     setReflection({ blocked: "", insight: "" });
   };
 
-  const handleSessionComplete = useCallback(() => {
-    setIsActive(false);
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-
-    const endTime = new Date();
-    const duration = startTimeRef.current
-      ? Math.round(
-          (endTime.getTime() - startTimeRef.current.getTime()) / (1000 * 60)
-        )
-      : 0;
-
-    const completedSession: DeepWorkSession = {
-      ...session!,
-      endTime: endTime.toISOString(),
-      duration,
-      type: isBreak ? "break" : "work",
-    };
-
-    if (!isBreak) {
-      // Show reflection for work sessions
-      setShowReflection(true);
-    } else {
-      // Break completed, start work session
-      setIsBreak(false);
-      setTimeLeft(WORK_DURATION * 60);
-      onSessionComplete?.(completedSession);
-    }
-  }, [session, isBreak, onSessionComplete]);
 
   const handleReflectionSubmit = () => {
     const completedSession: DeepWorkSession = {

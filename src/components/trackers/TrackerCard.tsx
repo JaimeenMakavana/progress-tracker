@@ -1,8 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Tracker, TrackerGroup } from "../../types";
-import { ProgressStats } from "../../utils/progress";
+import { Tracker, TrackerGroup, ProgressStats } from "../../types";
 import { StreakCard } from "../streak";
 
 interface TrackerCardProps {
