@@ -4,6 +4,14 @@ import { motion } from "framer-motion";
 import { useTransactions } from "../../context/TransactionsContext";
 import { TransactionTable, TransactionImport } from "../../components";
 import { Transaction } from "../../types";
+import {
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
+  Download,
+  Upload,
+  Receipt,
+} from "lucide-react";
 
 export default function ExpensesPage() {
   const { state, addTransactions, deleteTransaction, exportToCsv } =
@@ -55,19 +63,7 @@ export default function ExpensesPage() {
             <div className="blue-card p-4 sm:p-6">
               <div className="flex items-center">
                 <div className="p-4 bg-green-500 rounded-xl">
-                  <svg
-                    className="w-8 h-8 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-                    />
-                  </svg>
+                  <DollarSign className="w-8 h-8 text-white" />
                 </div>
                 <div className="ml-3 sm:ml-4">
                   <p className="text-xs sm:text-sm font-medium text-gray-600">
@@ -83,19 +79,7 @@ export default function ExpensesPage() {
             <div className="blue-card p-4 sm:p-6">
               <div className="flex items-center">
                 <div className="p-4 bg-red-500 rounded-xl">
-                  <svg
-                    className="w-8 h-8 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
-                    />
-                  </svg>
+                  <TrendingDown className="w-8 h-8 text-white" />
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">
@@ -111,19 +95,7 @@ export default function ExpensesPage() {
             <div className="blue-card p-4 sm:p-6">
               <div className="flex items-center">
                 <div className="p-4 bg-primary rounded-xl">
-                  <svg
-                    className="w-8 h-8 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                    />
-                  </svg>
+                  <TrendingUp className="w-8 h-8 text-white" />
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">
@@ -143,19 +115,7 @@ export default function ExpensesPage() {
             <div className="blue-card p-4 sm:p-6">
               <div className="flex items-center">
                 <div className="p-4 bg-gray-100 rounded-xl">
-                  <svg
-                    className="w-8 h-8 text-gray-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                    />
-                  </svg>
+                  <Receipt className="w-8 h-8 text-gray-600" />
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">
@@ -193,19 +153,7 @@ export default function ExpensesPage() {
                 onClick={() => setShowImportModal(true)}
                 className="btn-primary flex items-center justify-center gap-2 px-4 sm:px-6 py-3 whitespace-nowrap"
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
-                  />
-                </svg>
+                <Upload className="w-5 h-5" />
                 <span className="hidden sm:inline">Import Transactions</span>
                 <span className="sm:hidden">Import</span>
               </button>
@@ -214,19 +162,7 @@ export default function ExpensesPage() {
                   onClick={handleExport}
                   className="px-4 sm:px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 whitespace-nowrap"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
+                  <Download className="w-5 h-5" />
                   <span className="hidden sm:inline">Export CSV</span>
                   <span className="sm:hidden">Export</span>
                 </button>
@@ -244,19 +180,7 @@ export default function ExpensesPage() {
           {state.transactions.length === 0 ? (
             <div className="text-center py-20">
               <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-primary/10 to-success/10 rounded-2xl flex items-center justify-center">
-                <svg
-                  className="w-12 h-12 text-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                  />
-                </svg>
+                <Receipt className="w-12 h-12 text-primary" />
               </div>
               <h3 className="text-2xl font-bold text-black mb-3">
                 No transactions yet

@@ -1,5 +1,15 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
 
 interface ImportResult {
   success: boolean;
@@ -24,29 +34,24 @@ export function ImportTasksModal({
   onImportTasks,
   onClose,
 }: ImportTasksModalProps) {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <motion.div
-        className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-      >
-        <h2 className="text-xl font-bold text-black mb-4">
-          Import Tasks from JSON
-        </h2>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Import Tasks from JSON</DialogTitle>
+          <DialogDescription>
+            Import multiple tasks at once using JSON format.
+          </DialogDescription>
+        </DialogHeader>
 
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              JSON Data
-            </label>
-            <textarea
+          <div className="space-y-2">
+            <Label htmlFor="import-json">JSON Data</Label>
+            <Textarea
+              id="import-json"
               value={importJson}
               onChange={(e) => onImportJsonChange(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black font-mono text-sm"
+              className="font-mono text-sm min-h-[200px]"
               placeholder='[
   {
     "title": "Learn React Hooks",
@@ -63,9 +68,7 @@ export function ImportTasksModal({
     "tags": ["project", "react"]
   }
 ]'
-              rows={12}
               autoFocus
-              aria-label="JSON data for importing tasks"
             />
           </div>
 
@@ -128,24 +131,15 @@ export function ImportTasksModal({
           )}
         </div>
 
-        <div className="flex gap-3 mt-6">
-          <button
-            onClick={onImportTasks}
-            disabled={!importJson.trim()}
-            className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Import tasks from JSON"
-          >
-            Import Tasks
-          </button>
-          <button
-            onClick={onClose}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-            aria-label="Cancel import"
-          >
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
             Cancel
-          </button>
-        </div>
-      </motion.div>
-    </div>
+          </Button>
+          <Button onClick={onImportTasks} disabled={!importJson.trim()}>
+            Import Tasks
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

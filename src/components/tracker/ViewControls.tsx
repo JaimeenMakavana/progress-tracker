@@ -1,5 +1,7 @@
 import React from "react";
 import { ViewMode } from "../../hooks/useTrackerOperations";
+import { Button } from "../ui/button";
+import { Layers } from "lucide-react";
 
 interface ViewControlsProps {
   viewMode: ViewMode;
@@ -30,7 +32,9 @@ export function ViewControls({
       <div className="flex items-center gap-3">
         {/* View Mode Toggle */}
         <div className="flex items-center bg-white/50 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-1">
-          <button
+          <Button
+            variant={viewMode === "groups" ? "default" : "ghost"}
+            size="sm"
             onClick={() => onViewModeChange("groups")}
             className={`px-3 py-2 text-sm font-medium rounded-xl transition-all duration-200 ${
               viewMode === "groups"
@@ -40,8 +44,10 @@ export function ViewControls({
             aria-label="View in groups mode"
           >
             Groups
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={viewMode === "grid" ? "default" : "ghost"}
+            size="sm"
             onClick={() => onViewModeChange("grid")}
             className={`px-3 py-2 text-sm font-medium rounded-xl transition-all duration-200 ${
               viewMode === "grid"
@@ -51,30 +57,20 @@ export function ViewControls({
             aria-label="View in grid mode"
           >
             Grid
-          </button>
+          </Button>
         </div>
 
         {/* Group Manager Button */}
-        <button
+        <Button
+          variant="outline"
+          size="sm"
           onClick={onOpenGroupManager}
           className="flex items-center gap-2 px-3 py-2 text-sm font-medium bg-white/50 backdrop-blur-sm border border-gray-200/50 rounded-2xl hover:bg-white/80 transition-all duration-200"
           aria-label="Manage groups"
         >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-            />
-          </svg>
+          <Layers className="w-4 h-4" />
           <span className="hidden sm:inline">Manage Groups</span>
-        </button>
+        </Button>
       </div>
     </div>
   );

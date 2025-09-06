@@ -40,7 +40,7 @@ export function StreakCard({
 
   return (
     <div
-      className={`bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow ${className}`}
+      className={`bg-white rounded-lg border-2 border-[#2C3930] p-6 transition-all ${className}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
@@ -128,7 +128,7 @@ export function StreakCard({
 
       {/* Protection Mode */}
       {streakData.streakProtection.isActive && (
-        <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+        <div className="mt-4 p-3 bg-gray-50 border-2 border-[#2C3930] rounded-lg">
           <div className="flex items-center space-x-2">
             <span className="text-gray-600">🛡️</span>
             <div>

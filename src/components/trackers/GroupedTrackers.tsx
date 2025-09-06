@@ -9,6 +9,7 @@ interface GroupedTrackersProps {
   groups: Record<string, TrackerGroup>;
   onMoveTrackerToGroup: (trackerId: string, groupId: string | null) => void;
   onOpenTracker: (trackerId: string) => void;
+  onDeleteTracker?: (trackerId: string) => void;
   getProgress: (tracker: Tracker) => ProgressStats;
 }
 
@@ -17,6 +18,7 @@ export default function GroupedTrackers({
   groups,
   onMoveTrackerToGroup,
   onOpenTracker,
+  onDeleteTracker,
   getProgress,
 }: GroupedTrackersProps) {
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
@@ -169,6 +171,7 @@ export default function GroupedTrackers({
                         progress={getProgress(tracker)}
                         onMoveToGroup={onMoveTrackerToGroup}
                         onOpenTracker={onOpenTracker}
+                        onDelete={onDeleteTracker}
                         availableGroups={sortedGroups}
                       />
                     ))}
@@ -206,6 +209,7 @@ export default function GroupedTrackers({
                 progress={getProgress(tracker)}
                 onMoveToGroup={onMoveTrackerToGroup}
                 onOpenTracker={onOpenTracker}
+                onDelete={onDeleteTracker}
                 availableGroups={sortedGroups}
               />
             ))}

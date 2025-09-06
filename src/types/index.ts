@@ -14,6 +14,11 @@ export interface Task {
   mindset?: string; // short philosophy prompt
   quizIds?: string[]; // reference to static quiz bank
   reflectionPrompts?: string[]; // pre-written prompts
+  // v2 Gamification features
+  commitmentContract?: CommitmentContract;
+  difficultyLevel?: "easy" | "medium" | "hard";
+  reflectionData?: TaskReflection;
+  microRewards?: MicroReward[];
 }
 
 export interface Note {
@@ -129,6 +134,10 @@ export interface AppState {
   snapshots?: DailySnapshot[]; // for sparkline/history
   quizItems?: Record<string, QuizItem>;
   taskPages?: Record<string, TaskPage>; // Rich task pages
+  // v2 Gamification features
+  userProfile?: UserProfile;
+  challenges?: Record<string, Challenge>;
+  globalAchievements?: Record<string, Achievement>;
 }
 
 export interface ProgressStats {
@@ -234,4 +243,70 @@ export interface StreakStats {
   streakTrend: "increasing" | "decreasing" | "stable";
   nextMilestone?: number;
   daysToNextMilestone?: number;
+}
+
+// v2 Gamification Types
+export interface CommitmentContract {
+  id: string;
+  isActive: boolean;
+  penalty?: string;
+  reward?: string;
+  createdAt: string;
+  activatedAt?: string;
+}
+
+export interface TaskReflection {
+  feeling: "😌" | "💪" | "⚡" | "😤" | "🎯" | "🔥" | "💎" | "🏆";
+  note?: string;
+  completedAt: string;
+}
+
+export interface MicroReward {
+  id: string;
+  type:
+    | "streak_bonus"
+    | "effort_bonus"
+    | "consistency_bonus"
+    | "milestone_bonus";
+  value: number;
+  message: string;
+  earnedAt: string;
+  animation?: string;
+}
+
+export interface Challenge {
+  id: string;
+  name: string;
+  description: string;
+  type: "streak_sprint" | "effort_marathon" | "consistency_challenge";
+  duration: number; // days
+  target: number;
+  reward: string;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+  progress: number;
+  participants?: string[];
+}
+
+export interface UserProfile {
+  identityBadges: string[];
+  currentIdentity: string;
+  totalPoints: number;
+  level: number;
+  achievements: Achievement[];
+  preferences: {
+    enableAnimations: boolean;
+    enableSounds: boolean;
+    difficultyPreference: "easy" | "medium" | "hard";
+  };
+}
+
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  unlockedAt: string;
+  category: "streak" | "effort" | "consistency" | "milestone";
 }

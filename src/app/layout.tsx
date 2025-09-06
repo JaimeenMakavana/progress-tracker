@@ -32,9 +32,13 @@ export default function RootLayout({
       >
         <TrackersProvider>
           <TransactionsProvider>
-            <div className="h-dvh flex p-4 bg-gray-50">
-              <Navigation />
-              <div className="h-full flex-1 overflow-y-auto ">{children}</div>
+            <div className="h-dvh flex bg-gray-50">
+              <div className="flex-shrink-0 p-4">
+                <Navigation />
+              </div>
+              <div className="h-full flex-1 overflow-y-auto p-4 pl-0">
+                {children}
+              </div>
             </div>
           </TransactionsProvider>
         </TrackersProvider>

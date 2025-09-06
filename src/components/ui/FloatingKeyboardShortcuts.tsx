@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GLOBAL_SHORTCUTS } from "../../hooks/useKeyboardShortcuts";
+import { Button } from "./button";
+import { HelpCircle, X } from "lucide-react";
 
 interface FloatingKeyboardShortcutsProps {
   className?: string;
@@ -34,28 +36,21 @@ export function FloatingKeyboardShortcuts({
   return (
     <>
       {/* Floating Help Button */}
-      <motion.button
+      <motion.div
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: 1, scale: 1 }}
-        className={`fixed bottom-6 right-6 z-40 w-12 h-12 bg-black text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group ${className}`}
-        onClick={toggleExpanded}
+        className={`fixed bottom-6 right-6 z-40 ${className}`}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
       >
-        <svg
-          className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+        <Button
+          size="icon"
+          className="w-12 h-12 rounded-full shadow-lg hover:shadow-xl"
+          onClick={toggleExpanded}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-      </motion.button>
+          <HelpCircle className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300" />
+        </Button>
+      </motion.div>
 
       {/* Expanded Shortcuts Panel */}
       <AnimatePresence>
@@ -73,24 +68,14 @@ export function FloatingKeyboardShortcuts({
                 <h3 className="text-lg font-semibold text-black">
                   Keyboard Shortcuts
                 </h3>
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setIsExpanded(false)}
-                  className="text-gray-400 hover:text-black transition-colors p-1 hover:bg-gray-100 rounded"
+                  className="text-gray-400 hover:text-black"
                 >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
+                  <X className="w-4 h-4" />
+                </Button>
               </div>
 
               {/* Shortcuts List */}
@@ -155,24 +140,14 @@ export function FloatingKeyboardShortcuts({
                     Navigate efficiently without touching the mouse
                   </p>
                 </div>
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setIsVisible(false)}
-                  className="text-gray-400 hover:text-black transition-colors p-2 hover:bg-gray-100 rounded-lg"
+                  className="text-gray-400 hover:text-black"
                 >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
+                  <X className="w-6 h-6" />
+                </Button>
               </div>
 
               {/* Shortcuts Grid */}

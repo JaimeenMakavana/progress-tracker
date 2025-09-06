@@ -10,6 +10,9 @@ import {
   Note,
   TaskPage,
   TrackerGroup,
+  MicroReward,
+  Achievement,
+  Challenge,
 } from "../types";
 
 interface ImportTaskData {
@@ -34,6 +37,12 @@ import {
   updateStreakData as updateStreakUtil,
   createRecoveryPlan as createRecoveryPlanUtil,
 } from "../utils/streak";
+import {
+  calculateMicroRewards,
+  createTaskReflection,
+  // calculateUserLevel,
+  createCommitmentContract as createCommitmentContractUtil,
+} from "../utils/gamification";
 
 const KEY = "progress-os-v2-state";
 const defaultState: AppState = {
@@ -113,6 +122,43 @@ interface TrackersContextType {
     targetStreak?: number,
     planName?: string
   ) => void;
+  // v2 Gamification methods
+  toggleTaskCompleteWithReflection: (
+    trackerId: string,
+    taskId: string,
+    reflection?: { feeling: string; note?: string }
+  ) => void;
+  addMicroReward: (
+    trackerId: string,
+    taskId: string,
+    reward: { type: string; message: string; value: number }
+  ) => void;
+  updateUserProfile: (
+    profile: Partial<{
+      identityBadges: string[];
+      currentIdentity: string;
+      totalPoints: number;
+      level: number;
+      achievements: Achievement[];
+      preferences: {
+        enableAnimations: boolean;
+        enableSounds: boolean;
+        difficultyPreference: "easy" | "medium" | "hard";
+      };
+    }>
+  ) => void;
+  createCommitmentContract: (
+    trackerId: string,
+    taskId: string,
+    contract: { penalty?: string; reward?: string }
+  ) => void;
+  completeCommitmentContract: (trackerId: string, taskId: string) => void;
+  breakCommitmentContract: (trackerId: string, taskId: string) => void;
+  // Challenge management methods
+  createChallenge: (challenge: Challenge) => void;
+  joinChallenge: (challengeId: string) => void;
+  leaveChallenge: (challengeId: string) => void;
+  updateChallengeProgress: (challengeId: string, progress: number) => void;
 }
 
 const TrackersContext = createContext<TrackersContextType | null>(null);
@@ -807,6 +853,314 @@ export function TrackersProvider({ children }: { children: React.ReactNode }) {
     setState(updateAppMeta(newState));
   };
 
+  // v2 Gamification methods
+  const toggleTaskCompleteWithReflection = (
+    trackerId: string,
+    taskId: string,
+    reflection?: { feeling: string; note?: string }
+  ) => {
+    if (!state.trackers[trackerId] || !state.trackers[trackerId].tasks[taskId])
+      return;
+
+    const tracker = { ...state.trackers[trackerId] };
+    const task = { ...tracker.tasks[taskId] };
+
+    // Toggle task status
+    task.status = task.status === "done" ? "todo" : "done";
+    if (task.status === "done") {
+      task.completedAt = new Date().toISOString();
+      if (!task.startedAt) task.startedAt = new Date().toISOString();
+
+      // Add reflection data if provided
+      if (reflection) {
+        task.reflectionData = createTaskReflection(
+          reflection.feeling as
+            | "😌"
+            | "💪"
+            | "⚡"
+            | "😤"
+            | "🎯"
+            | "🔥"
+            | "💎"
+            | "🏆",
+          reflection.note
+        );
+      }
+
+      // Calculate and add micro rewards
+      const streakCount = tracker.streakData?.currentStreak || 0;
+      const totalTasksCompleted = Object.values(tracker.tasks).filter(
+        (t) => t.status === "done"
+      ).length;
+
+      const microRewards = calculateMicroRewards(
+        task,
+        streakCount,
+        totalTasksCompleted
+      );
+
+      task.microRewards = [...(task.microRewards || []), ...microRewards];
+    } else {
+      task.completedAt = undefined;
+      task.reflectionData = undefined;
+    }
+
+    tracker.tasks[taskId] = task;
+    tracker.activityLog = [
+      {
+        type: task.status === "done" ? "complete" : "open",
+        taskId,
+        at: new Date().toISOString(),
+        note: reflection?.note,
+      },
+      ...tracker.activityLog,
+    ];
+    tracker.updatedAt = new Date().toISOString();
+
+    const newState = {
+      ...state,
+      trackers: { ...state.trackers, [trackerId]: tracker },
+    };
+    setState(updateAppMeta(newState));
+
+    // Update streak data if enabled
+    if (tracker.settings.streakEnabled) {
+      updateStreakData(trackerId);
+    }
+  };
+
+  const addMicroReward = (
+    trackerId: string,
+    taskId: string,
+    reward: { type: string; message: string; value: number }
+  ) => {
+    if (!state.trackers[trackerId] || !state.trackers[trackerId].tasks[taskId])
+      return;
+
+    const tracker = { ...state.trackers[trackerId] };
+    const task = { ...tracker.tasks[taskId] };
+
+    const microReward: MicroReward = {
+      id: `reward-${Date.now()}`,
+      type: reward.type as
+        | "streak_bonus"
+        | "effort_bonus"
+        | "consistency_bonus"
+        | "milestone_bonus",
+      value: reward.value,
+      message: reward.message,
+      earnedAt: new Date().toISOString(),
+    };
+
+    task.microRewards = [...(task.microRewards || []), microReward];
+    tracker.tasks[taskId] = task;
+    tracker.updatedAt = new Date().toISOString();
+
+    const newState = {
+      ...state,
+      trackers: { ...state.trackers, [trackerId]: tracker },
+    };
+    setState(updateAppMeta(newState));
+  };
+
+  const updateUserProfile = (
+    profile: Partial<{
+      identityBadges: string[];
+      currentIdentity: string;
+      totalPoints: number;
+      level: number;
+      achievements: Achievement[];
+      preferences: {
+        enableAnimations: boolean;
+        enableSounds: boolean;
+        difficultyPreference: "easy" | "medium" | "hard";
+      };
+    }>
+  ) => {
+    const newState = {
+      ...state,
+      userProfile: {
+        identityBadges: [],
+        currentIdentity: "Disciplined Learner",
+        totalPoints: 0,
+        level: 0,
+        achievements: [],
+        preferences: {
+          enableAnimations: true,
+          enableSounds: true,
+          difficultyPreference: "medium" as const,
+        },
+        ...state.userProfile,
+        ...profile,
+      },
+    };
+    setState(updateAppMeta(newState));
+  };
+
+  const createCommitmentContract = (
+    trackerId: string,
+    taskId: string,
+    contract: { penalty?: string; reward?: string }
+  ) => {
+    if (!state.trackers[trackerId] || !state.trackers[trackerId].tasks[taskId])
+      return;
+
+    const tracker = { ...state.trackers[trackerId] };
+    const task = { ...tracker.tasks[taskId] };
+
+    task.commitmentContract = createCommitmentContractUtil(
+      contract.penalty,
+      contract.reward
+    );
+
+    tracker.tasks[taskId] = task;
+    tracker.updatedAt = new Date().toISOString();
+
+    const newState = {
+      ...state,
+      trackers: { ...state.trackers, [trackerId]: tracker },
+    };
+    setState(updateAppMeta(newState));
+  };
+
+  const completeCommitmentContract = (trackerId: string, taskId: string) => {
+    if (!state.trackers[trackerId] || !state.trackers[trackerId].tasks[taskId])
+      return;
+
+    const tracker = { ...state.trackers[trackerId] };
+    const task = { ...tracker.tasks[taskId] };
+
+    if (task.commitmentContract) {
+      task.commitmentContract.isActive = false;
+      // Add completion note
+      task.notes = [
+        ...(task.notes || []),
+        {
+          at: new Date().toISOString(),
+          text: `✅ Commitment contract completed! Reward: ${
+            task.commitmentContract.reward || "Well done!"
+          }`,
+          type: "reflection",
+        },
+      ];
+    }
+
+    tracker.tasks[taskId] = task;
+    tracker.updatedAt = new Date().toISOString();
+
+    const newState = {
+      ...state,
+      trackers: { ...state.trackers, [trackerId]: tracker },
+    };
+    setState(updateAppMeta(newState));
+  };
+
+  const breakCommitmentContract = (trackerId: string, taskId: string) => {
+    if (!state.trackers[trackerId] || !state.trackers[trackerId].tasks[taskId])
+      return;
+
+    const tracker = { ...state.trackers[trackerId] };
+    const task = { ...tracker.tasks[taskId] };
+
+    if (task.commitmentContract) {
+      task.commitmentContract.isActive = false;
+      // Add penalty note
+      task.notes = [
+        ...(task.notes || []),
+        {
+          at: new Date().toISOString(),
+          text: `❌ Commitment contract broken. Penalty: ${
+            task.commitmentContract.penalty || "Contract broken"
+          }`,
+          type: "reflection",
+        },
+      ];
+    }
+
+    tracker.tasks[taskId] = task;
+    tracker.updatedAt = new Date().toISOString();
+
+    const newState = {
+      ...state,
+      trackers: { ...state.trackers, [trackerId]: tracker },
+    };
+    setState(updateAppMeta(newState));
+  };
+
+  // Challenge management methods
+  const createChallenge = (challenge: Challenge) => {
+    const newState = {
+      ...state,
+      challenges: {
+        ...state.challenges,
+        [challenge.id]: challenge,
+      },
+    };
+    setState(updateAppMeta(newState));
+  };
+
+  const joinChallenge = (challengeId: string) => {
+    if (!state.challenges?.[challengeId]) return;
+
+    const challenge = { ...state.challenges[challengeId] };
+    const userIdentity = state.userProfile?.currentIdentity || "Anonymous";
+
+    if (!challenge.participants) {
+      challenge.participants = [];
+    }
+
+    if (!challenge.participants.includes(userIdentity)) {
+      challenge.participants.push(userIdentity);
+    }
+
+    const newState = {
+      ...state,
+      challenges: {
+        ...state.challenges,
+        [challengeId]: challenge,
+      },
+    };
+    setState(updateAppMeta(newState));
+  };
+
+  const leaveChallenge = (challengeId: string) => {
+    if (!state.challenges?.[challengeId]) return;
+
+    const challenge = { ...state.challenges[challengeId] };
+    const userIdentity = state.userProfile?.currentIdentity || "Anonymous";
+
+    if (challenge.participants) {
+      challenge.participants = challenge.participants.filter(
+        (p) => p !== userIdentity
+      );
+    }
+
+    const newState = {
+      ...state,
+      challenges: {
+        ...state.challenges,
+        [challengeId]: challenge,
+      },
+    };
+    setState(updateAppMeta(newState));
+  };
+
+  const updateChallengeProgress = (challengeId: string, progress: number) => {
+    if (!state.challenges?.[challengeId]) return;
+
+    const challenge = { ...state.challenges[challengeId] };
+    challenge.progress = Math.min(progress, challenge.target);
+
+    const newState = {
+      ...state,
+      challenges: {
+        ...state.challenges,
+        [challengeId]: challenge,
+      },
+    };
+    setState(updateAppMeta(newState));
+  };
+
   const value = useMemo(
     () => ({
       state,
@@ -845,6 +1199,18 @@ export function TrackersProvider({ children }: { children: React.ReactNode }) {
       updateStreakData,
       activateStreakProtection,
       createRecoveryPlan,
+      // v2 Gamification methods
+      toggleTaskCompleteWithReflection,
+      addMicroReward,
+      updateUserProfile,
+      createCommitmentContract,
+      completeCommitmentContract,
+      breakCommitmentContract,
+      // Challenge management methods
+      createChallenge,
+      joinChallenge,
+      leaveChallenge,
+      updateChallengeProgress,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [state, isLoading]

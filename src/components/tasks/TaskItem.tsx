@@ -2,6 +2,10 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Task } from "../../types";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { FileText, Edit, Trash2, Clock, CheckCircle } from "lucide-react";
+import { ProgressRing } from "../ui";
 
 interface TaskItemProps {
   task: Task;
@@ -10,6 +14,10 @@ interface TaskItemProps {
   onDelete: (taskId: string) => void;
   onOpenNoteDrawer: (taskId: string) => void;
   onOpenTaskPage: (taskId: string) => void;
+  // v2 Gamification props
+  // streakCount?: number;
+  // totalTasksCompleted?: number;
+  showProgressRing?: boolean;
 }
 
 export default function TaskItem({
@@ -19,9 +27,16 @@ export default function TaskItem({
   onDelete,
   onOpenNoteDrawer,
   onOpenTaskPage,
+  // streakCount = 0,
+  // totalTasksCompleted = 0,
+  showProgressRing = true,
 }: TaskItemProps) {
   const [showNoteInput, setShowNoteInput] = useState(false);
   const [note, setNote] = useState("");
+
+  const statusIcons = {
+    done: <CheckCircle className="w-4 h-4" />,
+  };
 
   const handleToggle = () => {
     if (task.status === "todo" && !showNoteInput) {
@@ -43,58 +58,32 @@ export default function TaskItem({
     }
   };
 
-  const statusColors = {
-    todo: "bg-gray-100 text-gray-800",
-    inprogress: "bg-gray-200 text-gray-800",
-    done: "bg-black text-white",
-  };
-
-  const statusIcons = {
-    todo: (
-      <svg
-        className="w-4 h-4"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-    ),
-    inprogress: (
-      <svg
-        className="w-4 h-4"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-    ),
-    done: (
-      <svg
-        className="w-4 h-4"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M5 13l4 4L19 7"
-        />
-      </svg>
-    ),
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "todo":
+        return (
+          <Badge variant="secondary" className="flex items-center gap-1">
+            <Clock className="w-3 h-3" />
+            To Do
+          </Badge>
+        );
+      case "inprogress":
+        return (
+          <Badge variant="outline" className="flex items-center gap-1">
+            <Clock className="w-3 h-3" />
+            In Progress
+          </Badge>
+        );
+      case "done":
+        return (
+          <Badge variant="default" className="flex items-center gap-1">
+            <CheckCircle className="w-3 h-3" />
+            Done
+          </Badge>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
@@ -109,16 +98,38 @@ export default function TaskItem({
       transition={{ duration: 0.3 }}
     >
       <div className="flex items-start gap-3">
-        <button
-          onClick={handleToggle}
-          className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-            task.status === "done"
-              ? "bg-black border-black text-white"
-              : "border-gray-300 hover:border-black"
-          }`}
-        >
-          {task.status === "done" && statusIcons.done}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleToggle}
+            className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+              task.status === "done"
+                ? "bg-black border-black text-white"
+                : "border-gray-300 hover:border-black"
+            }`}
+          >
+            {task.status === "done" && statusIcons.done}
+          </button>
+
+          {/* Progress Ring */}
+          {showProgressRing && task.status !== "done" && (
+            <ProgressRing
+              progress={0}
+              size="sm"
+              showAnimation={false}
+              className="opacity-50"
+            />
+          )}
+
+          {showProgressRing && task.status === "done" && (
+            <ProgressRing
+              progress={100}
+              size="sm"
+              showAnimation={true}
+              showReward={true}
+              rewardType="streak_bonus"
+            />
+          )}
+        </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between">
@@ -138,13 +149,7 @@ export default function TaskItem({
             </div>
 
             <div className="flex items-center gap-2 ml-4">
-              <span
-                className={`px-2 py-1 text-xs font-medium rounded-full ${
-                  statusColors[task.status]
-                }`}
-              >
-                {task.status}
-              </span>
+              {getStatusBadge(task.status)}
               <span className="text-xs text-gray-500">
                 Effort: {task.effort}
               </span>
@@ -181,21 +186,20 @@ export default function TaskItem({
                 autoFocus
               />
               <div className="flex gap-2 mt-2">
-                <button
-                  onClick={handleToggle}
-                  className="px-3 py-1 bg-black text-white text-sm rounded hover:bg-gray-800"
-                >
+                <Button onClick={handleToggle} size="sm" className="px-3 py-1">
                   Complete
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => {
                     setShowNoteInput(false);
                     setNote("");
                   }}
-                  className="px-3 py-1 border border-gray-300 text-gray-700 text-sm rounded hover:bg-gray-50"
+                  className="px-3 py-1"
                 >
                   Cancel
-                </button>
+                </Button>
               </div>
             </motion.div>
           )}
@@ -224,82 +228,42 @@ export default function TaskItem({
         </div>
 
         <div className="flex items-center gap-1">
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => onOpenTaskPage(task.id)}
-            className="p-1 text-gray-400 hover:text-black transition-colors"
+            className="p-1 text-gray-400 hover:text-black"
             title="Open page"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-          </button>
-          <button
+            <FileText className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => onOpenNoteDrawer(task.id)}
-            className="p-1 text-gray-400 hover:text-black transition-colors"
+            className="p-1 text-gray-400 hover:text-black"
             title="Add note"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
-              />
-            </svg>
-          </button>
-          <button
+            <Edit className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => onEdit(task.id)}
-            className="p-1 text-gray-400 hover:text-black transition-colors"
+            className="p-1 text-gray-400 hover:text-black"
             title="Edit task"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-              />
-            </svg>
-          </button>
-          <button
+            <Edit className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => onDelete(task.id)}
-            className="p-1 text-gray-400 hover:text-black transition-colors"
+            className="p-1 text-gray-400 hover:text-black"
             title="Delete task"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-              />
-            </svg>
-          </button>
+            <Trash2 className="w-4 h-4" />
+          </Button>
         </div>
       </div>
     </motion.div>

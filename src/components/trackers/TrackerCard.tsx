@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Tracker, TrackerGroup, ProgressStats } from "../../types";
 import { StreakCard } from "../streak";
+import { ConfirmationModal } from "../ui";
+import { FolderPlus, Trash2 } from "lucide-react";
 
 interface TrackerCardProps {
   tracker: Tracker;
@@ -12,6 +14,7 @@ interface TrackerCardProps {
   onOpenTracker: (trackerId: string) => void;
   availableGroups: TrackerGroup[];
   onEnableStreak?: (trackerId: string) => void;
+  onDelete?: (trackerId: string) => void;
 }
 
 export default function TrackerCard({
@@ -22,8 +25,11 @@ export default function TrackerCard({
   onOpenTracker,
   availableGroups,
   onEnableStreak,
+  onDelete,
 }: TrackerCardProps) {
   const [showGroupMenu, setShowGroupMenu] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const nextTask = Object.values(tracker.tasks).find(
     (task) => task.status === "todo"
@@ -32,6 +38,29 @@ export default function TrackerCard({
   const handleMoveToGroup = (groupId: string | null) => {
     onMoveToGroup(tracker.id, groupId);
     setShowGroupMenu(false);
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!onDelete) return;
+
+    setIsDeleting(true);
+    try {
+      await onDelete(tracker.id);
+      setShowDeleteConfirmation(false);
+    } catch (error) {
+      console.error("Failed to delete tracker:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirmation(false);
   };
 
   return (
@@ -61,59 +90,61 @@ export default function TrackerCard({
           )}
         </div>
 
-        {/* Group Menu */}
-        <div className="relative">
-          <button
-            onClick={() => setShowGroupMenu(!showGroupMenu)}
-            className="p-1 text-gray-400 hover:text-black transition-colors"
-            title="Move to group"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+        {/* Action Buttons */}
+        <div className="flex items-center gap-1">
+          {/* Group Menu */}
+          <div className="relative">
+            <button
+              onClick={() => setShowGroupMenu(!showGroupMenu)}
+              className="p-1 text-gray-400 hover:text-black transition-colors"
+              title="Move to group"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-              />
-            </svg>
-          </button>
+              <FolderPlus className="w-4 h-4" />
+            </button>
 
-          {showGroupMenu && (
-            <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-10 min-w-[200px]">
-              <div className="px-3 py-2 text-xs font-medium text-gray-500 border-b border-gray-100">
-                Move to group
-              </div>
-              <button
-                onClick={() => handleMoveToGroup(null)}
-                className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 ${
-                  !group ? "bg-gray-100 text-gray-900" : "text-gray-700"
-                }`}
-              >
-                No Group
-              </button>
-              {availableGroups.map((g) => (
+            {showGroupMenu && (
+              <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-10 min-w-[200px]">
+                <div className="px-3 py-2 text-xs font-medium text-gray-500 border-b border-gray-100">
+                  Move to group
+                </div>
                 <button
-                  key={g.id}
-                  onClick={() => handleMoveToGroup(g.id)}
-                  className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center gap-2 ${
-                    group?.id === g.id
-                      ? "bg-gray-100 text-gray-900"
-                      : "text-gray-700"
+                  onClick={() => handleMoveToGroup(null)}
+                  className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 ${
+                    !group ? "bg-gray-100 text-gray-900" : "text-gray-700"
                   }`}
                 >
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: g.color }}
-                  />
-                  {g.name}
+                  No Group
                 </button>
-              ))}
-            </div>
+                {availableGroups.map((g) => (
+                  <button
+                    key={g.id}
+                    onClick={() => handleMoveToGroup(g.id)}
+                    className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 flex items-center gap-2 ${
+                      group?.id === g.id
+                        ? "bg-gray-100 text-gray-900"
+                        : "text-gray-700"
+                    }`}
+                  >
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: g.color }}
+                    />
+                    {g.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Delete Button */}
+          {onDelete && (
+            <button
+              onClick={handleDeleteClick}
+              className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+              title="Delete tracker"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
           )}
         </div>
       </div>
@@ -205,6 +236,19 @@ export default function TrackerCard({
       >
         Open Tracker &gt;
       </button>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteConfirmation}
+        title="Delete Tracker"
+        message={`Are you sure you want to delete "${tracker.title}"? This action cannot be undone and will permanently remove all tasks and progress data.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        isLoading={isDeleting}
+      />
     </motion.div>
   );
 }

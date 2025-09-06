@@ -1,18 +1,32 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useTrackers } from "../context/TrackersContext";
 import { SyncButton } from "../components";
 import { StreakDashboard } from "../components/streak";
 import { FloatingKeyboardShortcuts } from "../components/ui";
+import { DisciplineVisualization } from "../components/progress";
+import { ChallengeDashboard } from "../components/challenges";
+import { UserProfile } from "../components/profile";
 import { calculateProgress } from "../utils/progress";
 import {
   useKeyboardShortcuts,
   GLOBAL_SHORTCUTS,
 } from "../hooks/useKeyboardShortcuts";
+import {
+  BarChart3,
+  CheckCircle,
+  Trophy,
+  Target,
+  Users,
+  Sparkles,
+} from "lucide-react";
 
 export default function Dashboard() {
   const { state, isLoading, enableStreakTracking } = useTrackers();
+  const [activeTab, setActiveTab] = useState<
+    "overview" | "challenges" | "profile"
+  >("overview");
 
   // Set up keyboard shortcuts
   useKeyboardShortcuts(GLOBAL_SHORTCUTS);
@@ -36,18 +50,29 @@ export default function Dashboard() {
   // Get all trackers for stats
   const trackers = Object.values(state.trackers);
   const totalTrackers = trackers.length;
-  const totalTasks = trackers.reduce(
-    (sum, tracker) => sum + Object.keys(tracker.tasks).length,
-    0
-  );
+  // const totalTasks = trackers.reduce(
+  //   (sum, tracker) => sum + Object.keys(tracker.tasks).length,
+  //   0
+  // );
   const completedTasks = trackers.reduce((sum, tracker) => {
     const progress = calculateProgress(tracker);
     return sum + progress.completed;
   }, 0);
 
+  // v2 Gamification stats
+  const userProfile = state.userProfile;
+  const challenges = Object.values(state.challenges || {});
+  const activeChallenges = challenges.filter(
+    (c) => c.isActive && new Date(c.endDate) > new Date()
+  );
+  // const completedChallenges = challenges.filter(
+  //   (c) => c.progress >= c.target || new Date(c.endDate) <= new Date()
+  // );
+  const totalPoints = userProfile?.totalPoints || 0;
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="h-full flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-gray-600">Loading your progress trackers...</p>
@@ -57,8 +82,53 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="h-full bg-gray-50">
-      <div className="max-w-7xl mx-auto p-4">
+    <div className="h-full">
+      <div className="max-w-7xl mx-auto">
+        {/* Header with Tabs */}
+        <motion.div
+          className="mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-[#2C3930] mb-2">
+                Progress Dashboard
+              </h1>
+              <p className="text-gray-600">
+                Track your productivity journey with gamified features
+              </p>
+            </div>
+            <div className="flex gap-2">
+              {[
+                { id: "overview", label: "Overview", icon: BarChart3 },
+                { id: "challenges", label: "Challenges", icon: Trophy },
+                { id: "profile", label: "Profile", icon: Users },
+              ].map((tab) => (
+                <motion.button
+                  key={tab.id}
+                  onClick={() =>
+                    setActiveTab(
+                      tab.id as "overview" | "challenges" | "profile"
+                    )
+                  }
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${
+                    activeTab === tab.id
+                      ? "border-[#2C3930] bg-[#2C3930] text-white"
+                      : "border-gray-200 hover:border-[#2C3930]"
+                  }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <tab.icon className="w-4 h-4" />
+                  {tab.label}
+                </motion.button>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
         {/* Stats Overview */}
         <motion.div
           className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
@@ -66,35 +136,23 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="bg-white rounded-xl border-2 border-[#2C3930] p-4 transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-gray-600 mb-1">
                   Active Trackers
                 </p>
-                <p className="text-xl font-bold text-primary">
+                <p className="text-xl font-bold text-[#2C3930]">
                   {totalTrackers}
                 </p>
               </div>
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <svg
-                  className="w-5 h-5 text-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                  />
-                </svg>
+              <div className="p-2 bg-[#2C3930]/10 rounded-lg">
+                <BarChart3 className="w-5 h-5 text-[#2C3930]" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="bg-white rounded-xl border-2 border-[#2C3930] p-4 transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-gray-600 mb-1">
@@ -105,105 +163,98 @@ export default function Dashboard() {
                 </p>
               </div>
               <div className="p-2 bg-green-100 rounded-lg">
-                <svg
-                  className="w-5 h-5 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+                <CheckCircle className="w-5 h-5 text-green-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="bg-white rounded-xl border-2 border-[#2C3930] p-4 transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-gray-600 mb-1">
-                  Total Tasks
+                  Total Points
                 </p>
-                <p className="text-xl font-bold text-gray-900">{totalTasks}</p>
+                <p className="text-xl font-bold text-[#2C3930]">
+                  {totalPoints}
+                </p>
               </div>
-              <div className="p-2 bg-gray-100 rounded-lg">
-                <svg
-                  className="w-5 h-5 text-gray-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  />
-                </svg>
+              <div className="p-2 bg-[#2C3930]/10 rounded-lg">
+                <Sparkles className="w-5 h-5 text-[#2C3930]" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="bg-white rounded-xl border-2 border-[#2C3930] p-4 transition-all duration-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-gray-600 mb-1">
-                  Overall Progress
+                  Active Challenges
                 </p>
-                <p className="text-xl font-bold text-primary">
-                  {totalTasks > 0
-                    ? Math.round((completedTasks / totalTasks) * 100)
-                    : 0}
-                  %
+                <p className="text-xl font-bold text-[#2C3930]">
+                  {activeChallenges.length}
                 </p>
               </div>
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <svg
-                  className="w-5 h-5 text-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                  />
-                </svg>
+              <div className="p-2 bg-[#2C3930]/10 rounded-lg">
+                <Target className="w-5 h-5 text-[#2C3930]" />
               </div>
             </div>
           </div>
         </motion.div>
 
-        {/* Streak Dashboard */}
-        {trackers.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="mb-6"
-          >
-            <div className="rounded-xl  shadow-sm">
-              <StreakDashboard
-                trackers={trackers}
-                onEnableStreak={enableStreakTracking}
-                onViewTracker={(id) =>
-                  (window.location.href = `/tracker/${id}`)
-                }
-              />
+        {/* Tab Content */}
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="mb-6"
+        >
+          {activeTab === "overview" && (
+            <div className="space-y-6">
+              {/* Streak Dashboard */}
+              {trackers.length > 0 && (
+                <div className="rounded-xl shadow-sm">
+                  <StreakDashboard
+                    trackers={trackers}
+                    onEnableStreak={enableStreakTracking}
+                    onViewTracker={(id) =>
+                      (window.location.href = `/tracker/${id}`)
+                    }
+                  />
+                </div>
+              )}
+
+              {/* Discipline Visualization */}
+              {trackers.length > 0 && trackers.some((t) => t.streakData) && (
+                <DisciplineVisualization
+                  streakData={
+                    trackers.find((t) => t.streakData)?.streakData || {
+                      currentStreak: 0,
+                      longestStreak: 0,
+                      totalDaysActive: 0,
+                      streakHistory: [],
+                      personalBests: [],
+                      streakProtection: {
+                        isActive: false,
+                        protectionType: "grace_period" as const,
+                        daysRemaining: 0,
+                      },
+                    }
+                  }
+                />
+              )}
             </div>
-          </motion.div>
-        )}
+          )}
+
+          {activeTab === "challenges" && <ChallengeDashboard />}
+
+          {activeTab === "profile" && <UserProfile />}
+        </motion.div>
 
         {/* Floating GitHub Sync Button */}
         <div className="fixed bottom-20 right-6 z-[100]">
-          <div className="bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full aspect-square shadow-lg flex items-center justify-center p-[6px]">
-            <SyncButton />
+          <div className="bg-white/90 backdrop-blur-sm border-2 border-[#2C3930] rounded-full flex items-center justify-center p-2 min-w-[48px] min-h-[48px]">
+            <SyncButton className="w-8 h-8" />
           </div>
         </div>
 

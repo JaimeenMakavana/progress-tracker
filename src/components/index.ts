@@ -25,3 +25,8 @@ export * from "./sync";
 // UI
 export * from "./ui";
 export * from "./streak";
+
+// v2 Gamification components
+export * from "./challenges";
+export * from "./coach";
+export * from "./profile";

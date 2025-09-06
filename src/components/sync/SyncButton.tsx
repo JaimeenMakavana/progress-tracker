@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useTrackers } from "../../context/TrackersContext";
 import { GitHubUser } from "../../services/githubSync";
+import { Github, RefreshCw, Check, ChevronDown } from "lucide-react";
+import { Button } from "../ui/button";
 
 interface SyncButtonProps {
   className?: string;
@@ -23,6 +25,7 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     const checkConnection = async () => {
@@ -71,7 +74,10 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
         setLastSyncTime(now);
         localStorage.setItem("last_sync_time", now);
 
-        // Show success message (you could add a toast notification here)
+        // Show success state briefly
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 2000);
+
         console.log("Sync successful");
       } else {
         console.error("Sync failed:", result.error);
@@ -84,31 +90,64 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
     }
   };
 
+  // Check if this is a floating button (compact mode)
+  const isFloating = className.includes("w-8") || className.includes("h-8");
+
   if (!isConnected) {
     return (
-      <button
+      <Button
+        variant="outline"
         onClick={handleConnect}
-        className={`flex items-center justify-center gap-2 px-3 sm:px-2 py-1  text-gray-700 rounded-full hover:bg-gray-50 transition-colors whitespace-nowrap ${className}`}
+        className={`${
+          isFloating
+            ? "w-full h-full"
+            : "gap-2 px-6 py-3 whitespace-nowrap h-12"
+        } ${className}`}
         title="Connect to GitHub for cloud sync"
       >
-        <svg
-          className="w-4 h-4 sm:w-5 sm:h-5"
-          fill="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-        </svg>
-      </button>
+        <Github className={`${isFloating ? "w-6 h-6" : "w-5 h-5"}`} />
+        {!isFloating && <span>Connect GitHub</span>}
+      </Button>
+    );
+  }
+
+  // For floating mode, show only the sync button
+  if (isFloating) {
+    return (
+      <Button
+        onClick={handleSync}
+        disabled={isSyncing || showSuccess}
+        className={`w-full h-full transition-all duration-200 ${
+          showSuccess
+            ? "bg-green-500 hover:bg-green-500"
+            : "bg-green-600 hover:bg-green-700"
+        } ${className}`}
+        title={
+          showSuccess
+            ? "Sync completed successfully!"
+            : lastSyncTime
+            ? `Last synced: ${lastSyncTime}`
+            : "Sync with GitHub"
+        }
+      >
+        {isSyncing ? (
+          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+        ) : showSuccess ? (
+          <Check className="w-6 h-6" />
+        ) : (
+          <RefreshCw className="w-6 h-6" />
+        )}
+      </Button>
     );
   }
 
   return (
     <div className={`relative ${className}`}>
       <div className="flex items-center gap-2">
-        <button
+        <Button
           onClick={handleSync}
           disabled={isSyncing}
-          className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+          className="gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 whitespace-nowrap h-12"
           title={
             lastSyncTime ? `Last synced: ${lastSyncTime}` : "Sync with GitHub"
           }
@@ -116,32 +155,20 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
           {isSyncing ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              <span className="hidden sm:inline">Syncing...</span>
-              <span className="sm:hidden">Sync</span>
+              <span>Syncing...</span>
             </>
           ) : (
             <>
-              <svg
-                className="w-4 h-4 sm:w-5 sm:h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-              <span className="hidden sm:inline">Sync</span>
+              <RefreshCw className="w-5 h-5" />
+              <span>Sync</span>
             </>
           )}
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="outline"
           onClick={() => setShowUserMenu(!showUserMenu)}
-          className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          className="gap-2 px-6 py-3 h-12"
           title="GitHub account menu"
         >
           {user?.avatar_url ? (
@@ -153,33 +180,17 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
               className="w-6 h-6 rounded-full"
             />
           ) : (
-            <svg
-              className="w-6 h-6 text-gray-600"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-            </svg>
+            <Github className="w-6 h-6 text-gray-600" />
           )}
           <span className="text-sm font-medium text-gray-700">
             {user?.login || "GitHub"}
           </span>
-          <svg
+          <ChevronDown
             className={`w-4 h-4 text-gray-500 transition-transform ${
               showUserMenu ? "rotate-180" : ""
             }`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </button>
+          />
+        </Button>
       </div>
 
       {/* User Menu Dropdown */}
@@ -212,12 +223,13 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
               </div>
             )}
 
-            <button
+            <Button
+              variant="ghost"
               onClick={handleDisconnect}
-              className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors"
+              className="w-full justify-start text-sm text-red-600 hover:bg-red-50"
             >
               Disconnect GitHub
-            </button>
+            </Button>
           </div>
         </div>
       )}

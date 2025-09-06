@@ -4,9 +4,14 @@ import { useParams, useRouter } from "next/navigation";
 import { useTrackerPage } from "../../../hooks/useTrackerPage";
 import { useNoteDrawer } from "../../../hooks/useNoteDrawer";
 import { useTaskPageModal } from "../../../hooks/useTaskPageModal";
-import { TrackerHeader, ProgressOverview, TaskList } from "../../../components";
+import {
+  TrackerHeader,
+  ProgressOverview,
+  EnhancedTaskList,
+} from "../../../components";
 import NoteDrawer from "../../../components/tasks/NoteDrawer";
 import TaskPage from "../../../components/tasks/TaskPage";
+import { AICoach } from "../../../components/coach";
 import { useTrackers } from "../../../context/TrackersContext";
 import {
   AddTaskModal,
@@ -39,7 +44,7 @@ export default function TrackerPage() {
     handleEditTask,
     handleImportTasks,
     handleEditTracker,
-    onToggleTask,
+    // onToggleTask,
     onDeleteTask,
     onAddNote,
   } = useTrackerPage(trackerId);
@@ -81,9 +86,8 @@ export default function TrackerPage() {
         {/* Tasks */}
         <div className="minimal-card p-6">
           <h2 className="text-xl font-semibold text-black mb-6">Tasks</h2>
-          <TaskList
-            tasks={tracker.tasks}
-            onToggleTask={onToggleTask}
+          <EnhancedTaskList
+            tracker={tracker}
             onEditTask={handleEditTask}
             onDeleteTask={onDeleteTask}
             onOpenNoteDrawer={noteDrawer.handleOpen}
@@ -140,6 +144,9 @@ export default function TrackerPage() {
             onClose={taskPageModal.handleClose}
           />
         )}
+
+        {/* AI Coach */}
+        {tracker && <AICoach trackerId={trackerId} />}
       </div>
     </div>
   );

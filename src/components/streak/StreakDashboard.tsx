@@ -123,7 +123,7 @@ export function StreakDashboard({
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
+    <div className="bg-white rounded-lg border-2 border-[#2C3930] p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -141,7 +141,7 @@ export function StreakDashboard({
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200 mb-6">
+      <div className="flex border-b-2  mb-6">
         {[
           { id: "overview", label: "Overview", icon: "📊" },
           { id: "competition", label: "Self-Competition", icon: "🏆" },

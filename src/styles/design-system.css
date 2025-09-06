@@ -1,8 +1,9 @@
-/* Design System - Progress OS v2 (Black/White Theme) */
+/* Design System - Progress OS v2 (Dark Green Theme) */
 :root {
-  /* Primary Colors - Minimal Black/White */
+  /* Primary Colors - Dark Green Theme */
   --color-white: #ffffff;
   --color-black: #000000;
+  --color-primary: #2c3930;
   --color-gray-50: #fafafa;
   --color-gray-100: #f5f5f5;
   --color-gray-200: #e5e5e5;
@@ -14,12 +15,11 @@
   --color-gray-800: #262626;
   --color-gray-900: #171717;
 
-  /* Semantic Colors - Minimal Theme */
-  --color-success: var(--color-black);
-  --color-primary: var(--color-black);
+  /* Semantic Colors - Dark Green Theme */
+  --color-success: var(--color-primary);
   --color-text: var(--color-black);
   --color-background: var(--color-white);
-  --color-hero-bg: var(--color-black);
+  --color-hero-bg: var(--color-primary);
   --color-accent: var(--color-gray-600);
   --color-focus: var(--color-gray-400);
 
@@ -127,15 +127,15 @@ body {
 
 /* Minimal Black/White Theme Classes */
 .hero-section {
-  background: var(--color-black);
+  background: var(--color-primary);
   color: var(--color-white);
 }
 
 .minimal-card {
   background-color: var(--color-white);
-  border: 2px solid var(--color-black);
+  border: 2px solid var(--color-primary);
   border-radius: var(--radius-xl);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(44, 57, 48, 0.1);
 }
 
 .minimal-card:hover {
@@ -258,7 +258,7 @@ body {
 
 .progress-fill {
   height: 100%;
-  background: var(--color-black);
+  background: var(--color-primary);
   border-radius: var(--radius-sm);
   transition: width var(--transition-slow);
 }
@@ -295,12 +295,12 @@ body {
 
 /* Focus States - Enhanced for Keyboard Navigation */
 .focus-ring:focus {
-  outline: 2px solid var(--color-black);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
 .keyboard-focus:focus-visible {
-  outline: 3px solid var(--color-black);
+  outline: 3px solid var(--color-primary);
   outline-offset: 2px;
   box-shadow: 0 0 0 1px var(--color-white);
 }
@@ -320,7 +320,7 @@ body {
   width: auto;
   height: auto;
   padding: 0.5rem;
-  background: var(--color-black);
+  background: var(--color-primary);
   color: var(--color-white);
   border-radius: var(--radius-sm);
   font-size: var(--text-sm);

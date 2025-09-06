@@ -145,6 +145,7 @@ export default function TrackerPage() {
                     groups={state.trackerGroups || {}}
                     onMoveTrackerToGroup={moveTrackerToGroup}
                     onOpenTracker={handleOpenTracker}
+                    onDeleteTracker={deleteTracker}
                     getProgress={calculateProgress}
                   />
                 </div>

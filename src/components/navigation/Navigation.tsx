@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, Receipt, Target } from "lucide-react";
+import { LayoutDashboard, Receipt, Target, Menu, X } from "lucide-react";
+import { Button } from "../ui/button";
 
 interface NavigationItem {
   name: string;
@@ -78,26 +79,21 @@ export default function Navigation() {
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="hidden lg:flex lg:flex-col w-16 bg-black h-full rounded-lg">
+      <nav className="hidden lg:flex lg:flex-col w-16 h-full bg-[#2C3930]  rounded-lg">
         {/* Navigation Items */}
-        <div className="flex-1 flex flex-col items-center justify-center space-y-4">
+        <div className="flex-1 flex flex-col items-center justify-center space-y-6">
           {navigationItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Tooltip key={item.name} content={item.name}>
                 <Link
                   href={item.href}
-                  className={`rounded-lg transition-all duration-200 `}
+                  className={`relative text-white rounded-xl transition-all duration-300 p-3 `}
                 >
-                  <div
-                    className={`w-6 h-6 ${
-                      isActive
-                        ? "text-white font-bold"
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    {item.icon}
-                  </div>
+                  <div className="w-6 h-6">{item.icon}</div>
+                  {isActive && (
+                    <div className="absolute -left-2 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-white rounded-l-full"></div>
+                  )}
                 </Link>
               </Tooltip>
             );
@@ -118,36 +114,23 @@ export default function Navigation() {
           </Link>
 
           {/* Hamburger Button */}
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={toggleMobileMenu}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="Toggle mobile menu"
           >
-            <motion.svg
-              className="w-6 h-6 text-gray-700"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <motion.div
               animate={{ rotate: isMobileMenuOpen ? 90 : 0 }}
               transition={{ duration: 0.2 }}
             >
               {isMobileMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
+                <X className="w-6 h-6 text-gray-700" />
               ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+                <Menu className="w-6 h-6 text-gray-700" />
               )}
-            </motion.svg>
-          </button>
+            </motion.div>
+          </Button>
         </div>
 
         {/* Mobile Menu Overlay */}
@@ -174,25 +157,14 @@ export default function Navigation() {
                 {/* Mobile Menu Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-200">
                   <span className="text-lg font-semibold text-black">Menu</span>
-                  <button
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={closeMobileMenu}
-                    className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
                     aria-label="Close mobile menu"
                   >
-                    <svg
-                      className="w-5 h-5 text-gray-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
+                    <X className="w-5 h-5 text-gray-500" />
+                  </Button>
                 </div>
 
                 {/* Mobile Menu Items */}
