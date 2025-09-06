@@ -13,6 +13,7 @@ export function useTrackerPage(trackerId: string) {
     addTask,
     deleteTask,
     toggleTaskComplete,
+    addNote,
     importTasks,
     updateTracker,
   } = useTrackers();
@@ -116,5 +117,14 @@ export function useTrackerPage(trackerId: string) {
     onToggleTask: (taskId: string, note?: string) =>
       toggleTaskComplete(trackerId, taskId, note),
     onDeleteTask: (taskId: string) => deleteTask(trackerId, taskId),
+    onAddNote: (
+      taskId: string,
+      note: { text: string; type?: "reflection" | "snippet" | "link" }
+    ) =>
+      addNote(trackerId, taskId, {
+        at: new Date().toISOString(),
+        text: note.text,
+        type: note.type,
+      }),
   };
 }

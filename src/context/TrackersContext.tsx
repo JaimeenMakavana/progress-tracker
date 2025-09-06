@@ -2,7 +2,15 @@
 import React, { createContext, useContext, useMemo } from "react";
 import { v4 as uuid } from "uuid";
 import { useIndexedDB } from "../hooks/useIndexedDB";
-import { AppState, Tracker, Task, Milestone, Note } from "../types";
+import {
+  AppState,
+  Tracker,
+  Task,
+  Milestone,
+  Note,
+  TaskPage,
+  TrackerGroup,
+} from "../types";
 
 interface ImportTaskData {
   title: string;
@@ -22,6 +30,10 @@ interface ImportTaskData {
 }
 import { migrateState, validateState } from "../utils/migration";
 import { githubSync, GitHubUser } from "../services/githubSync";
+import {
+  updateStreakData as updateStreakUtil,
+  createRecoveryPlan as createRecoveryPlanUtil,
+} from "../utils/streak";
 
 const KEY = "progress-os-v2-state";
 const defaultState: AppState = {
@@ -30,8 +42,10 @@ const defaultState: AppState = {
     lastUpdated: new Date().toISOString(),
   },
   trackers: {},
+  trackerGroups: {},
   snapshots: [],
   quizItems: {},
+  taskPages: {},
 };
 
 interface TrackersContextType {
@@ -74,6 +88,31 @@ interface TrackersContextType {
   connectToGitHub: () => Promise<boolean>;
   disconnectFromGitHub: () => void;
   getGitHubUser: () => Promise<GitHubUser | null>;
+  // Task Page methods
+  saveTaskPage: (taskPage: TaskPage) => void;
+  getTaskPage: (taskId: string) => TaskPage | undefined;
+  // Group methods
+  createGroup: (data: {
+    name: string;
+    description?: string;
+    color?: string;
+  }) => string;
+  updateGroup: (id: string, patch: Partial<TrackerGroup>) => void;
+  deleteGroup: (id: string) => void;
+  moveTrackerToGroup: (trackerId: string, groupId: string | null) => void;
+  // Streak management methods
+  enableStreakTracking: (trackerId: string, goal?: number) => void;
+  disableStreakTracking: (trackerId: string) => void;
+  updateStreakData: (trackerId: string) => void;
+  activateStreakProtection: (
+    trackerId: string,
+    protectionType: "grace_period" | "recovery_mode" | "maintenance_mode"
+  ) => void;
+  createRecoveryPlan: (
+    trackerId: string,
+    targetStreak?: number,
+    planName?: string
+  ) => void;
 }
 
 const TrackersContext = createContext<TrackersContextType | null>(null);
@@ -490,6 +529,283 @@ export function TrackersProvider({ children }: { children: React.ReactNode }) {
     return await githubSync.getCurrentUser();
   };
 
+  // Task Page methods
+  const saveTaskPage = (taskPage: TaskPage) => {
+    const newState = {
+      ...state,
+      taskPages: {
+        ...state.taskPages,
+        [taskPage.taskId]: taskPage,
+      },
+    };
+    setState(updateAppMeta(newState));
+  };
+
+  const getTaskPage = (taskId: string) => {
+    return state.taskPages?.[taskId];
+  };
+
+  // Group methods
+  const createGroup = (data: {
+    name: string;
+    description?: string;
+    color?: string;
+  }) => {
+    const groupId = uuid();
+    const newGroup: TrackerGroup = {
+      id: groupId,
+      name: data.name,
+      description: data.description,
+      color: data.color || "#3B82F6", // Default blue color
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      order: Object.keys(state.trackerGroups || {}).length,
+    };
+
+    const newState = {
+      ...state,
+      trackerGroups: {
+        ...state.trackerGroups,
+        [groupId]: newGroup,
+      },
+    };
+    setState(updateAppMeta(newState));
+    return groupId;
+  };
+
+  const updateGroup = (id: string, patch: Partial<TrackerGroup>) => {
+    if (!state.trackerGroups[id]) return;
+
+    const updatedGroup = {
+      ...state.trackerGroups[id],
+      ...patch,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const newState = {
+      ...state,
+      trackerGroups: {
+        ...state.trackerGroups,
+        [id]: updatedGroup,
+      },
+    };
+    setState(updateAppMeta(newState));
+  };
+
+  const deleteGroup = (id: string) => {
+    if (!state.trackerGroups[id]) return;
+
+    // Move all trackers in this group to ungrouped
+    const trackersInGroup = Object.values(state.trackers).filter(
+      (tracker) => tracker.groupId === id
+    );
+
+    const updatedTrackers = { ...state.trackers };
+    trackersInGroup.forEach((tracker) => {
+      updatedTrackers[tracker.id] = {
+        ...tracker,
+        groupId: undefined,
+        updatedAt: new Date().toISOString(),
+      };
+    });
+
+    const { [id]: _, ...remainingGroups } = state.trackerGroups;
+
+    const newState = {
+      ...state,
+      trackers: updatedTrackers,
+      trackerGroups: remainingGroups,
+    };
+    setState(updateAppMeta(newState));
+  };
+
+  const moveTrackerToGroup = (trackerId: string, groupId: string | null) => {
+    if (!state.trackers[trackerId]) return;
+
+    const updatedTracker = {
+      ...state.trackers[trackerId],
+      groupId: groupId || undefined,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const newState = {
+      ...state,
+      trackers: {
+        ...state.trackers,
+        [trackerId]: updatedTracker,
+      },
+    };
+    setState(updateAppMeta(newState));
+  };
+
+  // Streak management methods
+  const enableStreakTracking = (trackerId: string, goal: number = 1) => {
+    if (!state.trackers[trackerId]) return;
+
+    const updatedTracker = {
+      ...state.trackers[trackerId],
+      settings: {
+        ...state.trackers[trackerId].settings,
+        streakEnabled: true,
+        streakGoal: goal,
+      },
+      updatedAt: new Date().toISOString(),
+    };
+
+    const newState = {
+      ...state,
+      trackers: {
+        ...state.trackers,
+        [trackerId]: updatedTracker,
+      },
+    };
+    setState(updateAppMeta(newState));
+  };
+
+  const disableStreakTracking = (trackerId: string) => {
+    if (!state.trackers[trackerId]) return;
+
+    const updatedTracker = {
+      ...state.trackers[trackerId],
+      settings: {
+        ...state.trackers[trackerId].settings,
+        streakEnabled: false,
+        streakGoal: undefined,
+      },
+      updatedAt: new Date().toISOString(),
+    };
+
+    const newState = {
+      ...state,
+      trackers: {
+        ...state.trackers,
+        [trackerId]: updatedTracker,
+      },
+    };
+    setState(updateAppMeta(newState));
+  };
+
+  const updateStreakData = (trackerId: string) => {
+    if (
+      !state.trackers[trackerId] ||
+      !state.trackers[trackerId].settings.streakEnabled
+    )
+      return;
+
+    const tracker = state.trackers[trackerId];
+    const tasks = Object.values(tracker.tasks);
+    const completedToday = tasks.filter((task) => {
+      if (task.status !== "done" || !task.completedAt) return false;
+      const completedDate = new Date(task.completedAt)
+        .toISOString()
+        .split("T")[0];
+      const today = new Date().toISOString().split("T")[0];
+      return completedDate === today;
+    });
+
+    const tasksCompleted = completedToday.length;
+    const effortCompleted = completedToday.reduce(
+      (sum, task) => sum + task.effort,
+      0
+    );
+    const goal = tracker.settings.streakGoal || 1;
+
+    const updatedStreakData = updateStreakUtil(
+      tracker.streakData,
+      tasksCompleted,
+      effortCompleted,
+      goal
+    );
+
+    const updatedTracker = {
+      ...tracker,
+      streakData: updatedStreakData,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const newState = {
+      ...state,
+      trackers: {
+        ...state.trackers,
+        [trackerId]: updatedTracker,
+      },
+    };
+    setState(updateAppMeta(newState));
+  };
+
+  const activateStreakProtection = (
+    trackerId: string,
+    protectionType: "grace_period" | "recovery_mode" | "maintenance_mode"
+  ) => {
+    if (!state.trackers[trackerId] || !state.trackers[trackerId].streakData)
+      return;
+
+    const tracker = state.trackers[trackerId];
+    const updatedStreakData = {
+      ...tracker.streakData!,
+      streakProtection: {
+        isActive: true,
+        protectionType,
+        daysRemaining: protectionType === "grace_period" ? 1 : 3,
+        lastBreakDate: new Date().toISOString().split("T")[0],
+      },
+    };
+
+    const updatedTracker = {
+      ...tracker,
+      streakData: updatedStreakData,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const newState = {
+      ...state,
+      trackers: {
+        ...state.trackers,
+        [trackerId]: updatedTracker,
+      },
+    };
+    setState(updateAppMeta(newState));
+  };
+
+  const createRecoveryPlan = (
+    trackerId: string,
+    targetStreak: number = 30,
+    planName: string = "Streak Recovery"
+  ) => {
+    if (!state.trackers[trackerId] || !state.trackers[trackerId].streakData)
+      return;
+
+    const tracker = state.trackers[trackerId];
+    const recoveryPlan = createRecoveryPlanUtil(
+      tracker.streakData!,
+      targetStreak,
+      planName
+    );
+
+    const updatedStreakData = {
+      ...tracker.streakData!,
+      streakProtection: {
+        ...tracker.streakData!.streakProtection,
+        recoveryPlan,
+      },
+    };
+
+    const updatedTracker = {
+      ...tracker,
+      streakData: updatedStreakData,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const newState = {
+      ...state,
+      trackers: {
+        ...state.trackers,
+        [trackerId]: updatedTracker,
+      },
+    };
+    setState(updateAppMeta(newState));
+  };
+
   const value = useMemo(
     () => ({
       state,
@@ -514,6 +830,20 @@ export function TrackersProvider({ children }: { children: React.ReactNode }) {
       connectToGitHub,
       disconnectFromGitHub,
       getGitHubUser,
+      // Task Page methods
+      saveTaskPage,
+      getTaskPage,
+      // Group methods
+      createGroup,
+      updateGroup,
+      deleteGroup,
+      moveTrackerToGroup,
+      // Streak management methods
+      enableStreakTracking,
+      disableStreakTracking,
+      updateStreakData,
+      activateStreakProtection,
+      createRecoveryPlan,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [state, isLoading]

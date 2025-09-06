@@ -1,0 +1,105 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+title: React & Next.js Best Practices (2025)
+
+rules:
+
+- id: components-functional-hooks
+  message: Use function components with React Hooks. No new class components.
+  appliesTo: ["**/*.{ts,tsx}"]
+
+- id: single-responsibility
+  message: Keep components small and single-purpose; extract UI and logic into subcomponents and custom hooks.
+  appliesTo: ["**/*.{ts,tsx}"]
+
+- id: stable-keys
+  message: Use stable IDs as React keys; avoid array index as key for dynamic lists.
+  appliesTo: ["**/*.{ts,tsx}"]
+
+- id: state-colocation
+  message: Co-locate state with usage; lift only when sharing is required.
+  appliesTo: ["**/*.{ts,tsx}"]
+
+- id: derived-state
+  message: Avoid duplicating derived state; compute with useMemo from source-of-truth.
+  appliesTo: ["**/*.{ts,tsx}"]
+
+- id: effects-pure-deps
+  message: Effects must be side-effects only and include correct dependency arrays.
+  appliesTo: ["**/*.{ts,tsx}"]
+
+- id: memoization-targeted
+  message: Use React.memo/useMemo/useCallback only for proven bottlenecks or referential stability.
+  appliesTo: ["**/*.{ts,tsx}"]
+
+- id: data-fetching-server-first
+  message: Prefer Server Components/Route Handlers for data fetching; use client fetching only for interactive needs.
+  appliesTo: ["apps/web/app/**/*.{ts,tsx}"]
+
+- id: cache-revalidation
+  message: Use caching and revalidation (Next fetch cache/React Query) with explicit policies.
+  appliesTo: ["**/*.{ts,tsx}"]
+
+- id: loading-error-states
+  message: Always render loading, empty, and error UI for async data.
+  appliesTo: ["**/*.{ts,tsx}"]
+
+- id: feature-first-structure
+  message: Organize by feature/domain (components, hooks, tests together) for scalability.
+  appliesTo: ["**/*"]
+
+- id: naming-conventions
+  message: Use PascalCase for components, camelCase for vars/functions, kebab-case for files/paths.
+  appliesTo: ["**/*"]
+
+- id: design-system-primitives
+  message: Use shared UI primitives (Button, Input, Text) and tokens; avoid ad-hoc styles.
+  appliesTo: ["apps/web/components/**/*.{ts,tsx}"]
+
+- id: accessibility-semantic
+  message: Use semantic HTML elements; add ARIA attributes only when needed; ensure keyboard/focus support.
+  appliesTo: ["**/*.{ts,tsx}"]
+
+- id: images-next-image
+  message: Use Next/Image for images with explicit sizes; optimize and lazy-load where appropriate.
+  appliesTo: ["apps/web/**/*.{ts,tsx}"]
+
+- id: forms-validation
+  message: Validate with schema (Zod/Yup); show inline errors; keep inputs controlled unless perf dictates otherwise.
+  appliesTo: ["**/*.{ts,tsx}"]
+
+- id: custom-hooks
+  message: Extract reusable logic into custom hooks (prefix use*); return stable, typed APIs.
+  appliesTo: ["\*\*/*.{ts,tsx}"]
+
+- id: typescript-strict
+  message: Use strict TypeScript; avoid any; type all public props/returns and async results.
+  appliesTo: ["**/*.{ts,tsx}"]
+
+- id: error-boundaries
+  message: Wrap error-prone trees with Error Boundaries; log to monitoring (Sentry/Datadog).
+  appliesTo: ["apps/web/components/**/*.{ts,tsx}"]
+
+- id: security-no-dangerous-html
+  message: Avoid dangerouslySetInnerHTML; if unavoidable, sanitize and document.
+  appliesTo: ["**/*.{ts,tsx}"]
+
+- id: routing-app-router
+  message: Use App Router patterns; colocate route handlers; choose ISR/SSR/SSG based on freshness and personalization.
+  appliesTo: ["apps/web/app/**/*"]
+
+- id: testing-quality
+  message: Write unit/integration tests for critical flows with Jest/RTL; fix ESLint warnings promptly.
+  appliesTo: ["**/*"]
+
+- id: api-abort-idempotent
+  message: Abort in-flight fetches on unmount/param change; make mutations idempotent; support optimistic updates.
+  appliesTo: ["**/*.{ts,tsx}"]
+
+- id: i18n-formatting
+  message: Externalize strings; use Intl for dates/numbers; avoid hardcoded locale formatting.
+  appliesTo: ["**/*.{ts,tsx}"]

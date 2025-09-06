@@ -3,14 +3,31 @@ import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useTrackerPage } from "../../../hooks/useTrackerPage";
-import TrackerHeader from "../../../components/TrackerHeader";
-import ProgressOverview from "../../../components/ProgressOverview";
-import TaskList from "../../../components/TaskList";
+import { TrackerHeader, ProgressOverview, TaskList } from "../../../components";
+import NoteDrawer from "../../../components/tasks/NoteDrawer";
+import TaskPage from "../../../components/tasks/TaskPage";
+import { useTrackers } from "../../../context/TrackersContext";
 
 export default function TrackerPage() {
   const params = useParams();
   const router = useRouter();
   const trackerId = params.id as string;
+
+  // Note drawer state
+  const [noteDrawerOpen, setNoteDrawerOpen] = React.useState(false);
+  const [selectedTaskId, setSelectedTaskId] = React.useState<string | null>(
+    null
+  );
+  const [newNote, setNewNote] = React.useState("");
+  const [noteType, setNoteType] = React.useState<
+    "reflection" | "snippet" | "link"
+  >("reflection");
+
+  // Task page state
+  const [taskPageOpen, setTaskPageOpen] = React.useState(false);
+  const [selectedTaskForPage, setSelectedTaskForPage] = React.useState<
+    string | null
+  >(null);
 
   const {
     tracker,
@@ -34,7 +51,55 @@ export default function TrackerPage() {
     handleEditTracker,
     onToggleTask,
     onDeleteTask,
+    onAddNote,
   } = useTrackerPage(trackerId);
+
+  // Get task page methods from context
+  const { saveTaskPage, getTaskPage } = useTrackers();
+
+  // Note drawer handlers
+  const handleOpenNoteDrawer = (taskId: string) => {
+    setSelectedTaskId(taskId);
+    setNoteDrawerOpen(true);
+    setNewNote("");
+    setNoteType("reflection");
+  };
+
+  const handleCloseNoteDrawer = () => {
+    setNoteDrawerOpen(false);
+    setSelectedTaskId(null);
+    setNewNote("");
+  };
+
+  const handleSaveNote = () => {
+    if (selectedTaskId && newNote.trim()) {
+      onAddNote(selectedTaskId, { text: newNote.trim(), type: noteType });
+      handleCloseNoteDrawer();
+    }
+  };
+
+  const handleNoteKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+      handleSaveNote();
+    } else if (e.key === "Escape") {
+      handleCloseNoteDrawer();
+    }
+  };
+
+  // Task page handlers
+  const handleOpenTaskPage = (taskId: string) => {
+    setSelectedTaskForPage(taskId);
+    setTaskPageOpen(true);
+  };
+
+  const handleCloseTaskPage = () => {
+    setTaskPageOpen(false);
+    setSelectedTaskForPage(null);
+  };
+
+  const handleSaveTaskPage = (taskPage: any) => {
+    saveTaskPage(taskPage);
+  };
 
   if (!tracker) {
     return (
@@ -74,6 +139,8 @@ export default function TrackerPage() {
             onToggleTask={onToggleTask}
             onEditTask={handleEditTask}
             onDeleteTask={onDeleteTask}
+            onOpenNoteDrawer={handleOpenNoteDrawer}
+            onOpenTaskPage={handleOpenTaskPage}
           />
         </div>
 
@@ -273,6 +340,31 @@ export default function TrackerPage() {
               </div>
             </motion.div>
           </div>
+        )}
+
+        {/* Note Drawer */}
+        <NoteDrawer
+          isOpen={noteDrawerOpen}
+          taskTitle={
+            selectedTaskId ? tracker.tasks[selectedTaskId]?.title || "" : ""
+          }
+          noteType={noteType}
+          newNote={newNote}
+          onClose={handleCloseNoteDrawer}
+          onNoteTypeChange={setNoteType}
+          onNoteChange={setNewNote}
+          onSave={handleSaveNote}
+          onKeyDown={handleNoteKeyDown}
+        />
+
+        {/* Task Page */}
+        {taskPageOpen && selectedTaskForPage && (
+          <TaskPage
+            task={tracker.tasks[selectedTaskForPage]}
+            taskPage={getTaskPage(selectedTaskForPage)}
+            onSave={handleSaveTaskPage}
+            onClose={handleCloseTaskPage}
+          />
         )}
       </div>
     </div>

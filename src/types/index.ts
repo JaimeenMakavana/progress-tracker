@@ -22,6 +22,39 @@ export interface Note {
   type?: "reflection" | "snippet" | "link";
 }
 
+// Rich content blocks for Notion-like pages
+export interface ContentBlock {
+  id: string;
+  type:
+    | "text"
+    | "heading"
+    | "code"
+    | "list"
+    | "quote"
+    | "divider"
+    | "image"
+    | "link";
+  content: string;
+  metadata?: {
+    level?: number; // for headings (h1, h2, h3)
+    language?: string; // for code blocks
+    listType?: "bullet" | "numbered"; // for lists
+    url?: string; // for links and images
+    alt?: string; // for images
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TaskPage {
+  taskId: string;
+  title: string;
+  blocks: ContentBlock[];
+  createdAt: string;
+  updatedAt: string;
+  lastAccessedAt?: string;
+}
+
 export interface Milestone {
   id: string;
   title: string;
@@ -62,14 +95,28 @@ export interface Tracker {
   description: string;
   createdAt: string;
   updatedAt: string;
+  groupId?: string; // Reference to the group this tracker belongs to
   settings: {
     progressMethod: "weighted" | "count";
     weightField?: string;
+    streakEnabled?: boolean;
+    streakGoal?: number; // Daily goal for streak maintenance
   };
   tasks: Record<string, Task>;
   milestones: Milestone[];
   activityLog: Activity[];
   templatesUsed?: string[];
+  streakData?: StreakData;
+}
+
+export interface TrackerGroup {
+  id: string;
+  name: string;
+  description?: string;
+  color?: string; // Hex color for visual identification
+  createdAt: string;
+  updatedAt: string;
+  order: number; // For sorting groups
 }
 
 export interface AppState {
@@ -78,8 +125,10 @@ export interface AppState {
     lastUpdated: string;
   };
   trackers: Record<string, Tracker>;
+  trackerGroups: Record<string, TrackerGroup>; // Groups for organizing trackers
   snapshots?: DailySnapshot[]; // for sparkline/history
   quizItems?: Record<string, QuizItem>;
+  taskPages?: Record<string, TaskPage>; // Rich task pages
 }
 
 export interface ProgressStats {
@@ -88,4 +137,101 @@ export interface ProgressStats {
   total: number;
   completedEffort: number;
   totalEffort: number;
+}
+
+export interface Transaction {
+  id: string;
+  amount: number;
+  currency: string;
+  type: "credit" | "debit";
+  platform: "phonepe" | "googlepay" | "paytm" | "bank" | "other";
+  description: string;
+  merchant?: string;
+  category?: string;
+  date: string;
+  referenceId?: string;
+  status: "completed" | "pending" | "failed";
+  tags?: string[];
+  notes?: string;
+}
+
+export interface TransactionStats {
+  totalIncome: number;
+  totalExpense: number;
+  netAmount: number;
+  transactionCount: number;
+  platformBreakdown: Record<string, number>;
+  categoryBreakdown: Record<string, number>;
+}
+
+// Streak Tracking Types
+export interface StreakData {
+  currentStreak: number;
+  longestStreak: number;
+  totalDaysActive: number;
+  lastActivityDate?: string;
+  streakStartDate?: string;
+  streakHistory: StreakEntry[];
+  personalBests: PersonalBest[];
+  streakProtection: StreakProtection;
+}
+
+export interface StreakEntry {
+  date: string;
+  completed: boolean;
+  tasksCompleted: number;
+  effortCompleted: number;
+  streakAtTime: number;
+  notes?: string;
+}
+
+export interface PersonalBest {
+  id: string;
+  type:
+    | "longest_streak"
+    | "most_tasks_day"
+    | "most_effort_day"
+    | "fastest_completion";
+  value: number;
+  date: string;
+  trackerId?: string;
+  description: string;
+  achieved: boolean;
+}
+
+export interface StreakProtection {
+  isActive: boolean;
+  protectionType: "grace_period" | "recovery_mode" | "maintenance_mode";
+  daysRemaining: number;
+  lastBreakDate?: string;
+  recoveryPlan?: RecoveryPlan;
+}
+
+export interface RecoveryPlan {
+  id: string;
+  name: string;
+  description: string;
+  targetStreak: number;
+  milestones: RecoveryMilestone[];
+  isActive: boolean;
+  startDate: string;
+}
+
+export interface RecoveryMilestone {
+  id: string;
+  targetDays: number;
+  reward?: string;
+  achieved: boolean;
+  achievedDate?: string;
+}
+
+export interface StreakStats {
+  currentStreak: number;
+  longestStreak: number;
+  averageStreak: number;
+  totalStreaks: number;
+  consistencyScore: number; // 0-100
+  streakTrend: "increasing" | "decreasing" | "stable";
+  nextMilestone?: number;
+  daysToNextMilestone?: number;
 }
