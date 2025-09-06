@@ -55,7 +55,7 @@ export const MobileNavigation = ({
   return (
     <nav className="md:hidden w-full">
       {/* Mobile Header */}
-      <div className="flex items-center justify-between px-6 py-5 bg-gradient-to-r from-white/95 via-white/90 to-white/95 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
+      <div className="flex items-center justify-between px-6 py-3 bg-gradient-to-r from-white/95 via-white/90 to-white/95 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-4 group">
           <motion.div
