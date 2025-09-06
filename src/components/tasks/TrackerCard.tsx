@@ -136,7 +136,7 @@ export default function TrackerCard({
                   e.stopPropagation();
                   onEdit(tracker.id);
                 }}
-                className="p-2 text-gray-400 hover:text-primary transition-colors rounded-lg hover:bg-primary/10"
+                className="p-2 text-gray-400 hover:text-[#2C3930] transition-colors rounded-lg hover:bg-[#2C3930]/10"
                 title="Edit tracker"
               >
                 <svg
@@ -204,7 +204,7 @@ export default function TrackerCard({
             className={`mb-4 p-3 rounded-lg border ${
               variant === "featured"
                 ? "bg-white/10 border-white/20"
-                : "bg-gradient-to-r from-primary/5 to-success/5 border-primary/10"
+                : "bg-gradient-to-r from-primary/5 to-success/5 border-[#2C3930]/10"
             }`}
           >
             <div className="flex items-center gap-2 mb-1">
@@ -282,7 +282,7 @@ export default function TrackerCard({
         {tracker.settings.streakEnabled &&
         tracker.streakData &&
         variant !== "compact" ? (
-          <div className="mb-4">
+          <div className="mb-3 sm:mb-4">
             <StreakCard
               streakData={tracker.streakData}
               trackerTitle={tracker.title}
@@ -293,10 +293,10 @@ export default function TrackerCard({
         ) : (
           onEnableStreak &&
           variant !== "compact" && (
-            <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-sm font-medium text-gray-900">
+            <div className="mb-3 sm:mb-4 p-2 sm:p-3 bg-gray-50 rounded-lg">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs sm:text-sm font-medium text-gray-900">
                     Enable Streak Tracking
                   </div>
                   <div className="text-xs text-gray-600">
@@ -308,7 +308,7 @@ export default function TrackerCard({
                     e.stopPropagation();
                     onEnableStreak(tracker.id);
                   }}
-                  className="px-3 py-1 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  className="px-2 sm:px-3 py-1 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors whitespace-nowrap flex-shrink-0"
                 >
                   Enable
                 </button>

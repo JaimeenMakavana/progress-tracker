@@ -147,36 +147,59 @@ export default function ChallengeDashboard({
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-4 sm:mb-6 overflow-x-auto">
         {[
-          { id: "active", label: "Active", count: activeChallenges.length },
+          {
+            id: "active",
+            label: "Active",
+            count: activeChallenges.length,
+            shortLabel: "Active",
+          },
           {
             id: "completed",
             label: "Completed",
             count: completedChallenges.length,
+            shortLabel: "Done",
           },
           {
             id: "available",
             label: "Available",
             count: availableChallenges.length,
+            shortLabel: "New",
           },
         ].map((tab) => (
-          <motion.button
+          <div
             key={tab.id}
-            onClick={() =>
-              setActiveTab(tab.id as "active" | "completed" | "available")
-            }
-            className={`flex-1 p-3 rounded-lg border-2 transition-all ${
-              activeTab === tab.id
-                ? "border-[#2C3930] bg-[#2C3930] text-white"
-                : "border-gray-200 hover:border-[#2C3930]"
-            }`}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            className="relative group flex-1 sm:flex-none"
+            title={`${tab.label} (${tab.count} challenges)`}
           >
-            <div className="font-medium">{tab.label}</div>
-            <div className="text-sm opacity-75">{tab.count} challenges</div>
-          </motion.button>
+            <motion.button
+              onClick={() =>
+                setActiveTab(tab.id as "active" | "completed" | "available")
+              }
+              className={`w-full p-2 sm:p-3 rounded-lg border-2 transition-all min-w-0 ${
+                activeTab === tab.id
+                  ? "border-[#2C3930] bg-[#2C3930] text-white"
+                  : "border-gray-200 hover:border-[#2C3930]"
+              }`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="font-medium text-sm sm:text-base whitespace-nowrap">
+                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="sm:hidden">{tab.shortLabel}</span>
+              </div>
+              <div className="text-xs sm:text-sm opacity-75">
+                {tab.count} challenges
+              </div>
+            </motion.button>
+
+            {/* Mobile Tooltip */}
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none sm:hidden z-10">
+              {tab.label} ({tab.count} challenges)
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+            </div>
+          </div>
         ))}
       </div>
 

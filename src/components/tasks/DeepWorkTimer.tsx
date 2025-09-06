@@ -104,7 +104,6 @@ export default function DeepWorkTimer({
     setReflection({ blocked: "", insight: "" });
   };
 
-
   const handleReflectionSubmit = () => {
     const completedSession: DeepWorkSession = {
       ...session!,
@@ -212,7 +211,7 @@ export default function DeepWorkTimer({
           {!isActive ? (
             <button
               onClick={startTimer}
-              className="flex-1 btn-primary py-3 text-lg"
+              className="flex-1 btn-[#2C3930] py-3 text-lg"
             >
               {timeLeft === (isBreak ? BREAK_DURATION : WORK_DURATION) * 60
                 ? "Start"
@@ -300,7 +299,7 @@ export default function DeepWorkTimer({
                 <div className="flex gap-3 mt-6">
                   <button
                     onClick={handleReflectionSubmit}
-                    className="flex-1 btn-primary"
+                    className="flex-1 btn-[#2C3930]"
                   >
                     Complete Session
                   </button>

@@ -71,15 +71,19 @@ export default function TrackerHeader({
           </div>
           <div className="flex flex-wrap gap-3 items-center">
             <SyncButton className="h-12" />
-            <Button onClick={onAddTask} size="lg" className="h-12 px-6">
-              <Plus className="w-5 h-5 mr-2" />
+            <Button
+              onClick={onAddTask}
+              size="lg"
+              className="h-12 px-6 text-white"
+            >
+              <Plus className="w-5 h-5 mr-2 " />
               Add Task
             </Button>
             <Button
               variant="outline"
               onClick={onImportTasks}
               size="lg"
-              className="h-12 px-6 border-2 border-black text-black hover:bg-black hover:text-white"
+              className="h-12 px-6 border-2 border-[#2C3930] text-[#2C3930] hover:bg-[#2C3930] hover:text-white"
             >
               <Download className="w-5 h-5 mr-2" />
               Import Tasks

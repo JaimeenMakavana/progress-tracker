@@ -135,7 +135,7 @@ export default function QuizCard({ quizItem, onGrade, onSkip }: QuizCardProps) {
         <div className="mb-6">
           <button
             onClick={handleShowAnswer}
-            className="w-full btn-primary py-3"
+            className="w-full btn-[#2C3930] py-3"
           >
             Show Answer
           </button>

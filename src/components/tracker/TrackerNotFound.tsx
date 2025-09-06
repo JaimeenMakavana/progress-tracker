@@ -13,7 +13,7 @@ export function TrackerNotFound({ onBackToDashboard }: TrackerNotFoundProps) {
         </h1>
         <button
           onClick={onBackToDashboard}
-          className="px-6 py-3 btn-primary"
+          className="px-6 py-3 btn-[#2C3930]"
           aria-label="Go back to dashboard"
         >
           Back to Dashboard

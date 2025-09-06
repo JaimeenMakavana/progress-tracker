@@ -3,8 +3,16 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, Receipt, Target, Menu, X } from "lucide-react";
+import {
+  LayoutDashboard,
+  Receipt,
+  Target,
+  Menu,
+  X,
+  HelpCircle,
+} from "lucide-react";
 import { Button } from "../ui/button";
+import { SyncButton } from "../sync";
 
 interface NavigationItem {
   name: string;
@@ -79,7 +87,7 @@ export default function Navigation() {
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="hidden lg:flex lg:flex-col w-16 h-full bg-[#2C3930]  rounded-lg">
+      <nav className="hidden md:flex md:flex-col w-16 lg:w-20 h-full bg-[#2C3930] rounded-lg">
         {/* Navigation Items */}
         <div className="flex-1 flex flex-col items-center justify-center space-y-6">
           {navigationItems.map((item) => {
@@ -88,7 +96,7 @@ export default function Navigation() {
               <Tooltip key={item.name} content={item.name}>
                 <Link
                   href={item.href}
-                  className={`relative text-white rounded-xl transition-all duration-300 p-3 `}
+                  className={`relative text-white rounded-xl transition-all duration-300`}
                 >
                   <div className="w-6 h-6">{item.icon}</div>
                   {isActive && (
@@ -99,15 +107,40 @@ export default function Navigation() {
             );
           })}
         </div>
+
+        {/* Bottom Buttons */}
+        <div className="flex flex-col items-center space-y-3 lg:space-y-4 p-3 lg:p-4">
+          {/* Sync Button */}
+          <Tooltip content="GitHub Sync">
+            <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl overflow-hidden">
+              <SyncButton className="w-full h-full" />
+            </div>
+          </Tooltip>
+
+          {/* Shortcuts Button */}
+          <Tooltip content="Keyboard Shortcuts">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="w-8 h-8 lg:w-10 lg:h-10 text-white hover:bg-white/20 rounded-xl"
+              onClick={() => {
+                const event = new CustomEvent("shortcut:help");
+                document.dispatchEvent(event);
+              }}
+            >
+              <HelpCircle className="w-4 h-4 lg:w-5 lg:h-5" />
+            </Button>
+          </Tooltip>
+        </div>
       </nav>
 
       {/* Mobile Navigation */}
-      <nav className="lg:hidden w-full">
+      <nav className="md:hidden w-full">
         {/* Mobile Header */}
-        <div className="flex items-center justify-between px-4 py-4">
+        <div className="flex items-center justify-between px-2 sm:px-4 py-2 sm:py-4">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-[#2C3930] rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">P</span>
             </div>
             <span className="text-xl font-bold text-black">Progress OS</span>
@@ -148,7 +181,7 @@ export default function Navigation() {
 
               {/* Mobile Menu */}
               <motion.div
-                className="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-xl z-50"
+                className="fixed top-0 right-0 h-full w-80 sm:w-96 max-w-[90vw] bg-white shadow-xl z-50"
                 initial={{ x: "100%" }}
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}
@@ -168,7 +201,7 @@ export default function Navigation() {
                 </div>
 
                 {/* Mobile Menu Items */}
-                <div className="p-4">
+                <div className="p-4 flex-1">
                   <div className="space-y-2">
                     {navigationItems.map((item, index) => {
                       const isActive = pathname === item.href;
@@ -184,7 +217,7 @@ export default function Navigation() {
                             onClick={closeMobileMenu}
                             className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                               isActive
-                                ? "bg-primary text-white"
+                                ? "bg-[#2C3930] text-white"
                                 : "text-gray-700 hover:bg-gray-100 hover:text-black"
                             }`}
                           >
@@ -194,6 +227,42 @@ export default function Navigation() {
                         </motion.div>
                       );
                     })}
+                  </div>
+                </div>
+
+                {/* Mobile Bottom Buttons */}
+                <div className="p-3 sm:p-4 border-t border-gray-200">
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="flex-1"
+                    >
+                      <SyncButton className="w-full h-10 sm:h-12" />
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                      className="flex-1"
+                    >
+                      <Button
+                        variant="outline"
+                        className="w-full h-10 sm:h-12 flex items-center justify-center space-x-2 sm:space-x-3 text-sm sm:text-base"
+                        onClick={() => {
+                          const event = new CustomEvent("shortcut:help");
+                          document.dispatchEvent(event);
+                          closeMobileMenu();
+                        }}
+                      >
+                        <HelpCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <span className="font-medium hidden sm:inline">
+                          Keyboard Shortcuts
+                        </span>
+                        <span className="font-medium sm:hidden">Shortcuts</span>
+                      </Button>
+                    </motion.div>
                   </div>
                 </div>
               </motion.div>

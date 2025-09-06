@@ -146,14 +146,14 @@ export default function EnhancedTaskList({
 
   return (
     <>
-      <div className="space-y-3">
+      <div className="space-y-4 sm:space-y-6">
         {tasks.map((task) => (
           <motion.div
             key={task.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="space-y-2"
+            className="space-y-3 sm:space-y-4"
           >
             <TaskItem
               task={task}
@@ -179,12 +179,12 @@ export default function EnhancedTaskList({
 
             {/* Add Commitment Contract Button for incomplete tasks */}
             {task.status !== "done" && !task.commitmentContract?.isActive && (
-              <div className="ml-8">
+              <div className="ml-4 sm:ml-8">
                 <button
                   onClick={() =>
                     handleCreateCommitmentContract(task.id, task.title)
                   }
-                  className="text-xs text-purple-600 hover:text-purple-800 font-medium"
+                  className="text-xs sm:text-sm text-purple-600 hover:text-purple-800 font-medium transition-colors px-2 py-1 rounded-md hover:bg-purple-50"
                 >
                   + Add Commitment Contract
                 </button>
@@ -194,10 +194,12 @@ export default function EnhancedTaskList({
         ))}
 
         {tasks.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            <div className="text-4xl mb-4">📝</div>
-            <p className="text-lg font-medium mb-2">No tasks yet</p>
-            <p className="text-sm">Add your first task to get started!</p>
+          <div className="text-center py-12 sm:py-16 text-gray-500">
+            <div className="text-4xl sm:text-6xl mb-4">📝</div>
+            <p className="text-lg sm:text-xl font-medium mb-2">No tasks yet</p>
+            <p className="text-sm sm:text-base">
+              Add your first task to get started!
+            </p>
           </div>
         )}
       </div>

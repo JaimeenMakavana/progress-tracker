@@ -83,7 +83,7 @@ export default function GroupedTrackers({
             key={group.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gray-50 rounded-lg p-4"
+            className="bg-gray-50 rounded-lg"
           >
             {/* Group Header */}
             <div
@@ -188,7 +188,7 @@ export default function GroupedTrackers({
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gray-50 rounded-lg p-4"
+          className="bg-gray-50 rounded-lg"
         >
           <div className="flex items-center gap-3 mb-4">
             <div className="w-4 h-4 rounded-full bg-gray-400" />

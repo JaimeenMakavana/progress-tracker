@@ -91,21 +91,29 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
   };
 
   // Check if this is a floating button (compact mode)
-  const isFloating = className.includes("w-8") || className.includes("h-8");
+  const isFloating =
+    className.includes("w-8") ||
+    className.includes("h-8") ||
+    className.includes("w-full h-full") ||
+    className.includes("w-10") ||
+    className.includes("h-10");
 
   if (!isConnected) {
     return (
       <Button
-        variant="outline"
         onClick={handleConnect}
+        variant={isFloating ? "ghost" : "outline"}
+        size={isFloating ? "icon" : "default"}
         className={`${
           isFloating
-            ? "w-full h-full"
-            : "gap-2 px-6 py-3 whitespace-nowrap h-12"
+            ? "w-full h-full bg-white border-2 border-[#2C3930] text-[#2C3930] hover:bg-[#2C3930] hover:text-white rounded-xl"
+            : "gap-2 px-6 py-3 whitespace-nowrap h-12 bg-white border-2 border-[#2C3930] text-[#2C3930] hover:bg-[#2C3930] hover:text-white"
         } ${className}`}
         title="Connect to GitHub for cloud sync"
       >
-        <Github className={`${isFloating ? "w-6 h-6" : "w-5 h-5"}`} />
+        <Github
+          className={`${isFloating ? "w-4 h-4 lg:w-5 lg:h-5" : "w-5 h-5"}`}
+        />
         {!isFloating && <span>Connect GitHub</span>}
       </Button>
     );
@@ -117,10 +125,12 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
       <Button
         onClick={handleSync}
         disabled={isSyncing || showSuccess}
-        className={`w-full h-full transition-all duration-200 ${
+        variant="ghost"
+        size="icon"
+        className={`w-full h-full transition-all duration-200 rounded-xl ${
           showSuccess
-            ? "bg-green-500 hover:bg-green-500"
-            : "bg-green-600 hover:bg-green-700"
+            ? "bg-green-500 hover:bg-green-500 text-white"
+            : "bg-white border-2 border-[#2C3930] text-[#2C3930] hover:bg-[#2C3930] hover:text-white"
         } ${className}`}
         title={
           showSuccess
@@ -131,11 +141,15 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
         }
       >
         {isSyncing ? (
-          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+          <div
+            className={`animate-spin rounded-full h-4 w-4 lg:h-5 lg:w-5 border-b-2 ${
+              showSuccess ? "border-white" : "border-[#2C3930]"
+            }`}
+          ></div>
         ) : showSuccess ? (
-          <Check className="w-6 h-6" />
+          <Check className="w-4 h-4 lg:w-5 lg:h-5" />
         ) : (
-          <RefreshCw className="w-6 h-6" />
+          <RefreshCw className="w-4 h-4 lg:w-5 lg:h-5" />
         )}
       </Button>
     );
@@ -147,14 +161,14 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
         <Button
           onClick={handleSync}
           disabled={isSyncing}
-          className="gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 whitespace-nowrap h-12"
+          className="gap-2 px-6 py-3 bg-white border-2 border-[#2C3930] text-[#2C3930] hover:bg-[#2C3930] hover:text-white whitespace-nowrap h-12 transition-all"
           title={
             lastSyncTime ? `Last synced: ${lastSyncTime}` : "Sync with GitHub"
           }
         >
           {isSyncing ? (
             <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#2C3930]"></div>
               <span>Syncing...</span>
             </>
           ) : (
@@ -168,7 +182,7 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
         <Button
           variant="outline"
           onClick={() => setShowUserMenu(!showUserMenu)}
-          className="gap-2 px-6 py-3 h-12"
+          className="gap-2 p-3 h-12"
           title="GitHub account menu"
         >
           {user?.avatar_url ? (
@@ -182,9 +196,7 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
           ) : (
             <Github className="w-6 h-6 text-gray-600" />
           )}
-          <span className="text-sm font-medium text-gray-700">
-            {user?.login || "GitHub"}
-          </span>
+
           <ChevronDown
             className={`w-4 h-4 text-gray-500 transition-transform ${
               showUserMenu ? "rotate-180" : ""
@@ -208,9 +220,6 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
                 />
               )}
               <div>
-                <p className="font-medium text-gray-900">
-                  {user?.name || user?.login}
-                </p>
                 <p className="text-sm text-gray-500">@{user?.login}</p>
               </div>
             </div>

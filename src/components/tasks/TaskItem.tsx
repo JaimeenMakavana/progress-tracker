@@ -88,23 +88,22 @@ export default function TaskItem({
 
   return (
     <motion.div
-      className={`p-4 border rounded-lg transition-all ${
-        task.status === "done"
-          ? "bg-gray-50 border-gray-300"
-          : "bg-white border-gray-200"
+      className={`p-3 sm:p-4 lg:p-6 border rounded-xl sm:rounded-2xl transition-all hover:shadow-md ${
+        task.status === "done" ? "bg-gray-50/50 border-gray-300" : "bg-white"
       }`}
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="flex items-start gap-3">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+        {/* Left Section - Checkbox and Progress */}
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={handleToggle}
-            className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+            className={`flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 flex items-center justify-center transition-all ${
               task.status === "done"
-                ? "bg-black border-black text-white"
-                : "border-gray-300 hover:border-black"
+                ? "bg-[#2C3930] border-[#2C3930] text-white"
+                : "border-gray-300 hover:border-[#2C3930]"
             }`}
           >
             {task.status === "done" && statusIcons.done}
@@ -131,11 +130,13 @@ export default function TaskItem({
           )}
         </div>
 
+        {/* Main Content */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
+          {/* Header Section */}
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
+            <div className="flex-1 min-w-0">
               <h4
-                className={`font-medium ${
+                className={`font-semibold text-base sm:text-lg lg:text-xl leading-tight ${
                   task.status === "done"
                     ? "line-through text-gray-500"
                     : "text-black"
@@ -144,24 +145,28 @@ export default function TaskItem({
                 {task.title}
               </h4>
               {task.desc && (
-                <p className="text-sm text-gray-600 mt-1">{task.desc}</p>
+                <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2 leading-relaxed">
+                  {task.desc}
+                </p>
               )}
             </div>
 
-            <div className="flex items-center gap-2 ml-4">
+            {/* Status and Effort - Mobile Layout */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 sm:ml-4">
               {getStatusBadge(task.status)}
-              <span className="text-xs text-gray-500">
+              <span className="text-xs sm:text-sm text-gray-500 font-medium">
                 Effort: {task.effort}
               </span>
             </div>
           </div>
 
+          {/* Tags Section */}
           {task.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 sm:mt-4">
               {task.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-2 py-1 text-xs bg-black text-white rounded-full"
+                  className="px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm bg-[#2C3930] text-white rounded-full font-medium"
                 >
                   {tag}
                 </span>
@@ -169,9 +174,10 @@ export default function TaskItem({
             </div>
           )}
 
+          {/* Note Input */}
           {showNoteInput && (
             <motion.div
-              className="mt-3"
+              className="mt-3 sm:mt-4"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
@@ -182,11 +188,15 @@ export default function TaskItem({
                 onChange={(e) => setNote(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Add a completion note (optional)"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-[#2C3930] rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#2C3930]/20"
                 autoFocus
               />
-              <div className="flex gap-2 mt-2">
-                <Button onClick={handleToggle} size="sm" className="px-3 py-1">
+              <div className="flex flex-col sm:flex-row gap-2 mt-3">
+                <Button
+                  onClick={handleToggle}
+                  size="sm"
+                  className="px-4 py-2 bg-[#2C3930] hover:bg-[#2C3930]/90 text-white"
+                >
                   Complete
                 </Button>
                 <Button
@@ -196,7 +206,7 @@ export default function TaskItem({
                     setShowNoteInput(false);
                     setNote("");
                   }}
-                  className="px-3 py-1"
+                  className="px-4 py-2 border-2 border-[#2C3930] text-[#2C3930] hover:bg-[#2C3930] hover:text-white"
                 >
                   Cancel
                 </Button>
@@ -204,12 +214,13 @@ export default function TaskItem({
             </motion.div>
           )}
 
+          {/* Notes Section */}
           {task.notes.length > 0 && (
-            <div className="mt-3 space-y-1">
+            <div className="mt-3 sm:mt-4 space-y-2">
               {task.notes.map((note) => (
                 <div
                   key={`${note.at}-${note.text.slice(0, 20)}`}
-                  className="text-xs text-gray-600 bg-gray-50 p-2 rounded"
+                  className="text-xs sm:text-sm text-gray-600 bg-gray-50 p-2 sm:p-3 rounded-lg border border-gray-200"
                 >
                   <span className="font-medium">
                     {new Date(note.at).toLocaleDateString()}:
@@ -220,49 +231,51 @@ export default function TaskItem({
             </div>
           )}
 
+          {/* Completion Date */}
           {task.completedAt && (
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs sm:text-sm text-gray-500 mt-2 sm:mt-3 font-medium">
               Completed: {new Date(task.completedAt).toLocaleDateString()}
             </p>
           )}
         </div>
 
-        <div className="flex items-center gap-1">
+        {/* Action Buttons */}
+        <div className="flex items-center justify-end sm:justify-start gap-1 sm:gap-2 mt-2 sm:mt-0">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onOpenTaskPage(task.id)}
-            className="p-1 text-gray-400 hover:text-black"
+            className="p-1.5 sm:p-2 text-gray-400 hover:text-[#2C3930] transition-colors"
             title="Open page"
           >
-            <FileText className="w-4 h-4" />
+            <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onOpenNoteDrawer(task.id)}
-            className="p-1 text-gray-400 hover:text-black"
+            className="p-1.5 sm:p-2 text-gray-400 hover:text-[#2C3930] transition-colors"
             title="Add note"
           >
-            <Edit className="w-4 h-4" />
+            <Edit className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onEdit(task.id)}
-            className="p-1 text-gray-400 hover:text-black"
+            className="p-1.5 sm:p-2 text-gray-400 hover:text-[#2C3930] transition-colors"
             title="Edit task"
           >
-            <Edit className="w-4 h-4" />
+            <Edit className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onDelete(task.id)}
-            className="p-1 text-gray-400 hover:text-black"
+            className="p-1.5 sm:p-2 text-gray-400 hover:text-red-600 transition-colors"
             title="Delete task"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
         </div>
       </div>

@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { FloatingKeyboardShortcuts } from "../../components/ui";
 import GroupedTrackers from "../../components/trackers/GroupedTrackers";
 import GroupManager from "../../components/groups/GroupManager";
 import { calculateProgress } from "../../utils/progress";
@@ -98,7 +97,7 @@ export default function TrackerPage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2C3930] mx-auto mb-4"></div>
           <p className="text-gray-600">Loading my progress trackers...</p>
         </div>
       </div>
@@ -106,17 +105,19 @@ export default function TrackerPage() {
   }
 
   return (
-    <div className="h-full ">
-      <div className="max-w-7xl mx-auto p-4">
+    <div className="min-h-screen w-full">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 xl:px-8 py-2 sm:py-4 lg:py-6">
         {/* Search Bar */}
-        <SearchBar
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          onClearSearch={handleClearSearch}
-          resultCount={trackerStats.totalTrackers}
-          hasSearchQuery={!!searchQuery.trim()}
-          onCreateTracker={handleOpenCreateForm}
-        />
+        <div className="mb-4 sm:mb-6">
+          <SearchBar
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onClearSearch={handleClearSearch}
+            resultCount={trackerStats.totalTrackers}
+            hasSearchQuery={!!searchQuery.trim()}
+            onCreateTracker={handleOpenCreateForm}
+          />
+        </div>
 
         {/* Trackers Content */}
         <motion.div
@@ -129,17 +130,19 @@ export default function TrackerPage() {
           ) : (
             <>
               {/* View Controls */}
-              <ViewControls
-                viewMode={viewMode}
-                onViewModeChange={setViewMode}
-                onOpenGroupManager={() => setShowGroupManager(true)}
-                resultCount={trackerStats.totalTrackers}
-                hasSearchQuery={!!searchQuery.trim()}
-              />
+              <div className="mb-4 sm:mb-6">
+                <ViewControls
+                  viewMode={viewMode}
+                  onViewModeChange={setViewMode}
+                  onOpenGroupManager={() => setShowGroupManager(true)}
+                  resultCount={trackerStats.totalTrackers}
+                  hasSearchQuery={!!searchQuery.trim()}
+                />
+              </div>
 
               {/* Trackers Content */}
               {viewMode === "groups" ? (
-                <div className="bg-white/30 backdrop-blur-sm border border-gray-200/50 rounded-3xl p-6">
+                <div className="bg-white/30 backdrop-blur-sm rounded-2xl sm:rounded-3xl">
                   <GroupedTrackers
                     trackers={state.trackers}
                     groups={state.trackerGroups || {}}
@@ -182,9 +185,6 @@ export default function TrackerPage() {
             onClose={handleCloseGroupManager}
           />
         )}
-
-        {/* Floating Keyboard Shortcuts */}
-        <FloatingKeyboardShortcuts />
       </div>
     </div>
   );

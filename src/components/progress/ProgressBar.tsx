@@ -45,7 +45,9 @@ export default function ProgressBar({
             Progress
           </span>
           {showPercentage && (
-            <span className={`${textSizeClasses[size]} font-bold text-primary`}>
+            <span
+              className={`${textSizeClasses[size]} font-bold text-[#2C3930]`}
+            >
               {Math.round(safePercent)}%
             </span>
           )}
@@ -86,7 +88,7 @@ export default function ProgressBar({
               <div
                 key={milestone}
                 className={`w-1 h-1 rounded-full ${
-                  safePercent >= milestone ? "bg-primary" : "bg-gray-300"
+                  safePercent >= milestone ? "bg-[#2C3930]" : "bg-gray-300"
                 }`}
               />
             ))}

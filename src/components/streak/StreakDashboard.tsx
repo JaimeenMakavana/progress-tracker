@@ -123,46 +123,74 @@ export function StreakDashboard({
   };
 
   return (
-    <div className="bg-white rounded-lg border-2 border-[#2C3930] p-6">
+    <div className="bg-white rounded-lg border-2 border-[#2C3930] p-3 sm:p-4 lg:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-black">Streak Dashboard</h2>
-          <p className="text-gray-600">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6">
+        <div className="mb-3 sm:mb-0">
+          <h2 className="text-xl sm:text-2xl font-bold text-black">
+            Streak Dashboard
+          </h2>
+          <p className="text-sm sm:text-base text-gray-600">
             Track your consistency and compete with yourself
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-2xl">🔥</span>
-          <span className="text-lg font-semibold text-black">
+          <span className="text-xl sm:text-2xl">🔥</span>
+          <span className="text-base sm:text-lg font-semibold text-black">
             {overallStats.activeStreaks} Active Streaks
           </span>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b-2  mb-6">
+      <div className="flex sm:flex-row md:border-b-2 border-[#2C3930] mb-4 sm:mb-6 overflow-x-auto">
         {[
-          { id: "overview", label: "Overview", icon: "📊" },
-          { id: "competition", label: "Self-Competition", icon: "🏆" },
-          { id: "achievements", label: "Achievements", icon: "⭐" },
+          {
+            id: "overview",
+            label: "Overview",
+            icon: "📊",
+            shortLabel: "Overview",
+          },
+          {
+            id: "competition",
+            label: "Self-Competition",
+            icon: "🏆",
+            shortLabel: "Competition",
+          },
+          {
+            id: "achievements",
+            label: "Achievements",
+            icon: "⭐",
+            shortLabel: "Achievements",
+          },
         ].map((tab) => (
-          <button
+          <div
             key={tab.id}
-            onClick={() =>
-              setActiveTab(
-                tab.id as "overview" | "competition" | "achievements"
-              )
-            }
-            className={`flex items-center space-x-2 px-4 py-2 font-medium ${
-              activeTab === tab.id
-                ? "text-black border-b-2 border-black"
-                : "text-gray-600 hover:text-black"
-            }`}
+            className="relative group flex-1 sm:flex-none"
+            title={tab.label}
           >
-            <span>{tab.icon}</span>
-            <span>{tab.label}</span>
-          </button>
+            <button
+              onClick={() =>
+                setActiveTab(
+                  tab.id as "overview" | "competition" | "achievements"
+                )
+              }
+              className={`w-full flex items-center justify-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 sm:py-3 font-medium text-sm sm:text-base whitespace-nowrap min-w-0 ${
+                activeTab === tab.id
+                  ? "text-black border-b-2 border-black"
+                  : "text-gray-600 hover:text-black"
+              }`}
+            >
+              <span className="text-base sm:text-lg">{tab.icon}</span>
+              <span className="hidden sm:inline">{tab.label}</span>
+            </button>
+
+            {/* Mobile Tooltip */}
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none sm:hidden z-10">
+              {tab.label}
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+            </div>
+          </div>
         ))}
       </div>
 
@@ -170,7 +198,7 @@ export function StreakDashboard({
       {activeTab === "overview" && (
         <div className="space-y-6">
           {/* Overall Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="text-center p-4 bg-gray-50 rounded-lg">
               <div className="text-2xl font-bold text-black">
                 {overallStats.totalCurrentStreaks}
@@ -200,28 +228,30 @@ export function StreakDashboard({
           {/* Trackers without streaks */}
           {trackers.filter((t) => !t.settings.streakEnabled).length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold text-black mb-4">
+              <h3 className="text-base sm:text-lg font-semibold text-black mb-3 sm:mb-4">
                 Enable Streak Tracking
               </h3>
-              <div className="grid gap-4">
+              <div className="grid gap-3 sm:gap-4">
                 {trackers
                   .filter((t) => !t.settings.streakEnabled)
                   .map((tracker) => (
                     <div
                       key={tracker.id}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg gap-3 sm:gap-4"
                     >
-                      <div>
-                        <div className="font-medium text-black">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-black text-sm sm:text-base truncate">
                           {tracker.title}
                         </div>
-                        <div className="text-sm text-gray-600">
-                          {tracker.description}
-                        </div>
+                        {tracker.description && (
+                          <div className="text-xs sm:text-sm text-gray-600 truncate">
+                            {tracker.description}
+                          </div>
+                        )}
                       </div>
                       <button
                         onClick={() => onEnableStreak(tracker.id)}
-                        className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors"
+                        className="px-3 sm:px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors text-xs sm:text-sm font-medium whitespace-nowrap flex-shrink-0"
                       >
                         Enable Streaks
                       </button>

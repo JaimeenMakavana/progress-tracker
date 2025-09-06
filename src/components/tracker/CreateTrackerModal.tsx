@@ -34,7 +34,7 @@ export function CreateTrackerModal({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-[#2C3930] rounded-xl flex items-center justify-center">
               <Plus className="w-6 h-6 text-white" />
             </div>
             <div>
