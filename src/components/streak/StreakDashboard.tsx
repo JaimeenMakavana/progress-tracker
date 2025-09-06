@@ -123,7 +123,7 @@ export function StreakDashboard({
   };
 
   return (
-    <div className="bg-white rounded-lg border-2 border-[#2C3930] p-3 sm:p-4 lg:p-6">
+    <div className="bg-white rounded-2xl border-2 border-[#2C3930] p-3 sm:p-4 lg:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6">
         <div className="mb-3 sm:mb-0">
