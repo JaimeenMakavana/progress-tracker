@@ -48,7 +48,7 @@ export default function ReflectionModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-white">
         <DialogHeader>
           <DialogTitle className="text-center">🎉 Task Completed!</DialogTitle>
         </DialogHeader>

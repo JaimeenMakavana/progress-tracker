@@ -56,7 +56,7 @@ export default function ReflectionModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto bg-white">
         <DialogHeader>
           <DialogTitle>Task Completed!</DialogTitle>
           <DialogDescription>
