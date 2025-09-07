@@ -32,7 +32,7 @@ interface ImportTaskData {
   reflectionPrompts?: string[];
 }
 import { migrateState, validateState } from "../utils/migration";
-import { githubSync, GitHubUser } from "../services/githubSync";
+import { multiGistSync, GitHubUser } from "../services/multiGistSync";
 import {
   updateStreakData as updateStreakUtil,
   createRecoveryPlan as createRecoveryPlanUtil,
@@ -539,9 +539,9 @@ export function TrackersProvider({ children }: { children: React.ReactNode }) {
   // GitHub Sync methods
   const syncWithGitHub = async () => {
     try {
-      const result = await githubSync.syncData(state);
-      if (result.success && result.data) {
-        setState(updateAppMeta(result.data));
+      const result = await multiGistSync.syncAppState(state);
+      if (result.success && result.mergedAppState) {
+        setState(updateAppMeta(result.mergedAppState));
         return { success: true };
       } else {
         return { success: false, error: result.error };
@@ -555,12 +555,12 @@ export function TrackersProvider({ children }: { children: React.ReactNode }) {
   };
 
   const isGitHubConnected = () => {
-    return githubSync.isAuthenticated();
+    return multiGistSync.isAuthenticated();
   };
 
   const connectToGitHub = async () => {
     try {
-      return await githubSync.authenticate();
+      return await multiGistSync.authenticate();
     } catch (error) {
       console.error("GitHub connection error:", error);
       return false;
@@ -568,11 +568,11 @@ export function TrackersProvider({ children }: { children: React.ReactNode }) {
   };
 
   const disconnectFromGitHub = () => {
-    githubSync.logout();
+    multiGistSync.logout();
   };
 
   const getGitHubUser = async () => {
-    return await githubSync.getCurrentUser();
+    return await multiGistSync.getCurrentUser();
   };
 
   // Task Page methods

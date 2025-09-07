@@ -138,6 +138,11 @@ export interface AppState {
   userProfile?: UserProfile;
   challenges?: Record<string, Challenge>;
   globalAchievements?: Record<string, Achievement>;
+  // Todo system
+  todos?: Todo[];
+  categories?: TodoCategory[];
+  todoStats?: TodoStats;
+  todoAchievements?: TodoAchievement[];
 }
 
 export interface ProgressStats {
@@ -309,4 +314,100 @@ export interface Achievement {
   icon: string;
   unlockedAt: string;
   category: "streak" | "effort" | "consistency" | "milestone";
+}
+
+// Todo System Types
+export interface Todo {
+  id: string;
+  title: string;
+  description?: string;
+  type:
+    | "checklist"
+    | "learning_term"
+    | "project_milestone"
+    | "daily_habit"
+    | "quick_action";
+  category: string;
+  tags: string[];
+  status: "pending" | "completed" | "archived";
+  priority: "low" | "medium" | "high";
+  createdAt: string;
+  updatedAt: string;
+  completedAt?: string;
+  dueDate?: string;
+  estimatedTime?: number; // in minutes
+  actualTime?: number; // in minutes
+  xpValue: number; // XP points for completion
+  streakCount?: number; // for daily habits
+  lastCompletedAt?: string; // for daily habits
+  // Learning term specific
+  definition?: string;
+  examples?: string[];
+  masteryLevel?: "beginner" | "intermediate" | "advanced";
+  // Project milestone specific
+  projectId?: string;
+  progress?: number; // 0-100
+  // Quick action specific
+  actionType?: "call" | "email" | "research" | "purchase" | "other";
+  // Gamification
+  microRewards?: MicroReward[];
+  reflection?: TodoReflection;
+}
+
+export interface TodoReflection {
+  feeling: "😌" | "💪" | "⚡" | "😤" | "🎯" | "🔥" | "💎" | "🏆";
+  note?: string;
+  completedAt: string;
+  timeSpent?: number; // in minutes
+}
+
+export interface TodoCategory {
+  id: string;
+  name: string;
+  color: string;
+  icon: string;
+  description?: string;
+  createdAt: string;
+  order: number;
+}
+
+export interface TodoStats {
+  totalTodos: number;
+  completedTodos: number;
+  pendingTodos: number;
+  totalXP: number;
+  currentStreak: number;
+  longestStreak: number;
+  averageCompletionTime: number;
+  categoryBreakdown: Record<string, number>;
+  typeBreakdown: Record<string, number>;
+  weeklyProgress: WeeklyProgress[];
+}
+
+export interface WeeklyProgress {
+  week: string; // YYYY-WW format
+  todosCompleted: number;
+  xpEarned: number;
+  streakDays: number;
+  averageTime: number;
+}
+
+export interface TodoAchievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  category: "streak" | "completion" | "speed" | "consistency" | "variety";
+  requirement: {
+    type: "streak" | "count" | "time" | "category" | "type";
+    value: number;
+    timeframe?: "daily" | "weekly" | "monthly" | "all_time";
+  };
+  reward: {
+    xp: number;
+    badge?: string;
+    title?: string;
+  };
+  unlockedAt?: string;
+  progress?: number; // 0-100
 }

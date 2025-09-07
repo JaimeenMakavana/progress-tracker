@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { useTrackers } from "../context/TrackersContext";
 import { calculateProgress } from "../utils/progress";
 import { useKeyboardShortcuts, GLOBAL_SHORTCUTS } from "./useKeyboardShortcuts";
+import { useTodos } from "./useTodos";
 
 export const useDashboard = () => {
   const { state, isLoading, enableStreakTracking } = useTrackers();
+  const { stats: todoStats } = useTodos();
   const [activeTab, setActiveTab] = useState<
     "overview" | "challenges" | "profile"
   >("overview");
@@ -54,5 +56,6 @@ export const useDashboard = () => {
     activeChallenges,
     totalPoints,
     enableStreakTracking,
+    todoStats,
   };
 };

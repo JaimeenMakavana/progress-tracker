@@ -2,7 +2,13 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { LayoutDashboard, Receipt, Target, HelpCircle } from "lucide-react";
+import {
+  LayoutDashboard,
+  Receipt,
+  Target,
+  HelpCircle,
+  CheckSquare,
+} from "lucide-react";
 import { Button } from "../ui/button";
 import { SyncButton } from "../sync";
 import { Tooltip } from "./Tooltip";
@@ -23,6 +29,11 @@ const navigationItems: NavigationItem[] = [
     name: "Dashboard",
     href: "/",
     icon: <LayoutDashboard className="w-6 h-6" strokeWidth={1} />,
+  },
+  {
+    name: "Todos",
+    href: "/todo",
+    icon: <CheckSquare className="w-6 h-6" strokeWidth={1} />,
   },
   {
     name: "Expenses",

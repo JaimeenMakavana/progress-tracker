@@ -9,6 +9,7 @@ import {
   Menu,
   X,
   HelpCircle,
+  CheckSquare,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { SyncButton } from "../sync";
@@ -29,6 +30,11 @@ const navigationItems: NavigationItem[] = [
     name: "Dashboard",
     href: "/",
     icon: <LayoutDashboard className="w-6 h-6" strokeWidth={1} />,
+  },
+  {
+    name: "Todos",
+    href: "/todo",
+    icon: <CheckSquare className="w-6 h-6" strokeWidth={1} />,
   },
   {
     name: "Expenses",

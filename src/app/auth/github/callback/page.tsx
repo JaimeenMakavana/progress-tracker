@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Check, X } from "lucide-react";
-import { githubSync } from "@/services/githubSync";
+import { multiGistSync } from "@/services/multiGistSync";
 
 function CallbackContent() {
   const router = useRouter();
@@ -32,7 +32,7 @@ function CallbackContent() {
           return;
         }
 
-        const success = await githubSync.handleCallback(code, state);
+        const success = await multiGistSync.handleCallback(code, state);
 
         if (success) {
           setStatus("success");

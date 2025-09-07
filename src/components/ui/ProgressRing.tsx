@@ -4,7 +4,8 @@ import { motion } from "framer-motion";
 
 interface ProgressRingProps {
   progress: number; // 0-100
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | number;
+  strokeWidth?: number;
   showAnimation?: boolean;
   showReward?: boolean;
   rewardType?:
@@ -18,6 +19,7 @@ interface ProgressRingProps {
 export default function ProgressRing({
   progress,
   size = "md",
+  strokeWidth,
   showAnimation = true,
   showReward = false,
   rewardType = "streak_bonus",
@@ -29,7 +31,16 @@ export default function ProgressRing({
     lg: { size: 40, stroke: 4 },
   };
 
-  const { size: ringSize, stroke } = sizeClasses[size];
+  // Handle both string sizes and numeric sizes
+  const ringSize =
+    typeof size === "number"
+      ? size
+      : sizeClasses[size as keyof typeof sizeClasses].size;
+  const stroke =
+    strokeWidth ||
+    (typeof size === "number"
+      ? 6
+      : sizeClasses[size as keyof typeof sizeClasses].stroke);
   const radius = (ringSize - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (progress / 100) * circumference;

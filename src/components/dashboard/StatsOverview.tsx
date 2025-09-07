@@ -1,13 +1,21 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import { BarChart3, CheckCircle, Sparkles, Target } from "lucide-react";
+import {
+  BarChart3,
+  CheckCircle,
+  Sparkles,
+  Target,
+  CheckSquare,
+} from "lucide-react";
+import { TodoStats } from "../../types";
 
 interface StatsOverviewProps {
   totalTrackers: number;
   completedTasks: number;
   totalPoints: number;
   activeChallenges: number;
+  todoStats: TodoStats;
 }
 
 const stats = [
@@ -39,6 +47,20 @@ const stats = [
     bgColor: "bg-[#2C3930]/10",
     delay: 1.1,
   },
+  {
+    title: "Todos Completed",
+    icon: CheckSquare,
+    color: "blue-600",
+    bgColor: "bg-blue-100",
+    delay: 1.2,
+  },
+  {
+    title: "Todo Streak",
+    icon: Target,
+    color: "orange-600",
+    bgColor: "bg-orange-100",
+    delay: 1.3,
+  },
 ];
 
 export const StatsOverview = ({
@@ -46,12 +68,20 @@ export const StatsOverview = ({
   completedTasks,
   totalPoints,
   activeChallenges,
+  todoStats,
 }: StatsOverviewProps) => {
-  const values = [totalTrackers, completedTasks, totalPoints, activeChallenges];
+  const values = [
+    totalTrackers,
+    completedTasks,
+    totalPoints,
+    activeChallenges,
+    todoStats.completedTodos,
+    todoStats.currentStreak,
+  ];
 
   return (
     <motion.div
-      className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8"
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 sm:gap-6 mb-6 sm:mb-8"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.7 }}

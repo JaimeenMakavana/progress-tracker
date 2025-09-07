@@ -19,6 +19,7 @@ export default function Dashboard() {
     activeChallenges,
     totalPoints,
     enableStreakTracking,
+    todoStats,
   } = useDashboard();
 
   if (isLoading) {
@@ -37,6 +38,7 @@ export default function Dashboard() {
           completedTasks={completedTasks}
           totalPoints={totalPoints}
           activeChallenges={activeChallenges.length}
+          todoStats={todoStats}
         />
 
         {/* Tab Content */}

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useTrackers } from "../../context/TrackersContext";
-import { GitHubUser } from "../../services/githubSync";
+import { GitHubUser } from "../../services/multiGistSync";
 import { Github, RefreshCw, Check, ChevronDown } from "lucide-react";
 import { Button } from "../ui/button";
 
