@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 import { QuizItem } from "../../types";
 
 interface QuizCardProps {
@@ -98,21 +99,11 @@ export default function QuizCard({ quizItem, onGrade, onSkip }: QuizCardProps) {
             onClick={() => setShowHint(!showHint)}
             className="text-sm text-gray-600 hover:text-black transition-colors flex items-center gap-1"
           >
-            <svg
+            <ChevronDown
               className={`w-4 h-4 transition-transform ${
                 showHint ? "rotate-180" : ""
               }`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
+            />
             {showHint ? "Hide hint" : "Show hint"}
           </button>
           <AnimatePresence>

@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { X, FileText, Edit, List, Code, Clipboard, Plus } from "lucide-react";
 import { Task, TaskPage as TaskPageType, ContentBlock } from "../../types";
 import ContentBlockComponent from "./ContentBlock";
 import { v4 as uuid } from "uuid";
@@ -141,19 +142,7 @@ export default function TaskPage({
               onClick={onClose}
               className="p-2 text-gray-400 hover:text-black transition-colors rounded-lg hover:bg-gray-100"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <X className="w-6 h-6" />
             </button>
           </div>
         </div>
@@ -167,26 +156,15 @@ export default function TaskPage({
                 {/* Welcome Section */}
                 <div className="text-center mb-8">
                   <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                    <svg
-                      className="w-8 h-8 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
+                    <FileText className="w-8 h-8 text-gray-400" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
                     Start building your knowledge
                   </h3>
                   <p className="text-gray-600 mb-6">
-                    This is your personal space for &ldquo;{task.title}&rdquo;. Add
-                    thoughts, code snippets, links, and insights as you learn.
+                    This is your personal space for &ldquo;{task.title}&rdquo;.
+                    Add thoughts, code snippets, links, and insights as you
+                    learn.
                   </p>
                 </div>
 
@@ -203,19 +181,7 @@ export default function TaskPage({
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                        <svg
-                          className="w-4 h-4 text-blue-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                          />
-                        </svg>
+                        <Edit className="w-4 h-4 text-blue-600" />
                       </div>
                       <div>
                         <h4 className="font-medium text-gray-900">
@@ -247,19 +213,7 @@ export default function TaskPage({
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <svg
-                          className="w-4 h-4 text-green-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 6h16M4 10h16M4 14h16M4 18h16"
-                          />
-                        </svg>
+                        <List className="w-4 h-4 text-green-600" />
                       </div>
                       <div>
                         <h4 className="font-medium text-gray-900">
@@ -292,19 +246,7 @@ export default function TaskPage({
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                        <svg
-                          className="w-4 h-4 text-purple-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-                          />
-                        </svg>
+                        <Code className="w-4 h-4 text-purple-600" />
                       </div>
                       <div>
                         <h4 className="font-medium text-gray-900">Add code</h4>
@@ -335,19 +277,7 @@ export default function TaskPage({
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                        <svg
-                          className="w-4 h-4 text-orange-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-                          />
-                        </svg>
+                        <Clipboard className="w-4 h-4 text-orange-600" />
                       </div>
                       <div>
                         <h4 className="font-medium text-gray-900">
@@ -365,19 +295,7 @@ export default function TaskPage({
                 <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 bg-blue-50/50">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                      <svg
-                        className="w-3 h-3 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                        />
-                      </svg>
+                      <Plus className="w-3 h-3 text-white" />
                     </div>
                     <span className="text-sm font-medium text-blue-700">
                       Click here to start writing
@@ -388,7 +306,8 @@ export default function TaskPage({
                     onClick={() => setEditingBlockId(blocks[0]?.id || null)}
                   >
                     <p className="text-gray-500 text-sm">
-                      Type your first thoughts about &ldquo;{task.title}&rdquo;...
+                      Type your first thoughts about &ldquo;{task.title}
+                      &rdquo;...
                     </p>
                   </div>
                 </div>

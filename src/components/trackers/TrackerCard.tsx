@@ -189,7 +189,7 @@ export default function TrackerCard({
             .map((tag) => (
               <span
                 key={tag}
-                className="px-2 py-1 text-xs bg-black text-white rounded-full"
+                className="px-2 py-1 text-xs bg-[#2C3930] text-white rounded-full"
               >
                 {tag}
               </span>
@@ -232,7 +232,7 @@ export default function TrackerCard({
       {/* Open Button */}
       <button
         onClick={() => onOpenTracker(tracker.id)}
-        className="w-full bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors font-medium"
+        className="w-full bg-[#2C3930] text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors font-medium"
       >
         Open Tracker &gt;
       </button>

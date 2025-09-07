@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 import { Tracker, TrackerGroup, ProgressStats } from "../../types";
 import TrackerCardGrid from "./TrackerCard";
 
@@ -133,21 +134,11 @@ export default function GroupedTrackers({
                 </div>
 
                 <button className="p-1 text-gray-400 hover:text-black transition-colors">
-                  <svg
+                  <ChevronDown
                     className={`w-5 h-5 transition-transform ${
                       isExpanded ? "rotate-180" : ""
                     }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
+                  />
                 </button>
               </div>
             </div>

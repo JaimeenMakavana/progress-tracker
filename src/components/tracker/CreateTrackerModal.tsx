@@ -31,7 +31,7 @@ export function CreateTrackerModal({
 }: CreateTrackerModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg bg-white">
         <DialogHeader>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#2C3930] rounded-xl flex items-center justify-center">
@@ -82,7 +82,7 @@ export function CreateTrackerModal({
           </Button>
           <Button
             onClick={onCreateTracker}
-            className="py-4 text-lg font-semibold"
+            className="py-4 text-lg font-semibold text-white"
           >
             Create Tracker
           </Button>

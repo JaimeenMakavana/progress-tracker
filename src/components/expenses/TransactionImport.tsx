@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
+import { X, Plus, AlertCircle, Loader2 } from "lucide-react";
 import { Transaction } from "../../types";
 
 interface TransactionImportProps {
@@ -180,19 +181,7 @@ export default function TransactionImport({
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <X className="w-6 h-6" />
           </button>
         </div>
 
@@ -313,19 +302,7 @@ export default function TransactionImport({
           {importType === "manual" && (
             <div className="text-center py-8">
               <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                <svg
-                  className="w-8 h-8 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
+                <Plus className="w-8 h-8 text-gray-400" />
               </div>
               <h4 className="text-lg font-medium text-gray-900 mb-2">
                 Manual Entry
@@ -347,19 +324,7 @@ export default function TransactionImport({
           {error && (
             <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
               <div className="flex">
-                <svg
-                  className="w-5 h-5 text-red-400 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+                <AlertCircle className="w-5 h-5 text-red-400 mr-2" />
                 <div>
                   <h4 className="text-sm font-medium text-red-800">
                     Import Error
@@ -377,21 +342,7 @@ export default function TransactionImport({
             disabled={isProcessing || (importType === "csv" && !csvData.trim())}
             className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            {isProcessing && (
-              <svg
-                className="w-4 h-4 animate-spin"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-            )}
+            {isProcessing && <Loader2 className="w-4 h-4 animate-spin" />}
             {isProcessing ? "Importing..." : "Import Transactions"}
           </button>
           <button
