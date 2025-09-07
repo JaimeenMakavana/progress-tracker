@@ -36,7 +36,7 @@ export function AddTaskModal({
 }: AddTaskModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-white">
         <DialogHeader>
           <DialogTitle>Add New Task</DialogTitle>
           <DialogDescription>
@@ -85,7 +85,7 @@ export function AddTaskModal({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={onAddTask}>Add Task</Button>
+          <Button onClick={onAddTask} className="bg-[#2C3930] text-white">Add Task</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
