@@ -116,6 +116,10 @@ export default function TrackerPage() {
             resultCount={trackerStats.totalTrackers}
             hasSearchQuery={!!searchQuery.trim()}
             onCreateTracker={handleOpenCreateForm}
+            onAITasksCreated={(trackerId) => {
+              console.log("New AI-generated tracker created:", trackerId);
+              // You can add navigation logic here
+            }}
           />
         </div>
 

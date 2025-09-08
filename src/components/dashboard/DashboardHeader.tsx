@@ -2,6 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { TabNavigation } from "./TabNavigation";
+import { AITaskPlannerButton, AIStatusBadge, TapasAIButton } from "../ai";
 
 export const DashboardHeader = ({
   activeTab,
@@ -24,18 +25,37 @@ export const DashboardHeader = ({
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#2C3930] to-[#2C3930]/80 bg-clip-text text-transparent mb-3">
-              Progress Dashboard
-            </h1>
+            <div className="flex items-center gap-3 mb-3">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#2C3930] to-[#2C3930]/80 bg-clip-text text-transparent">
+                Progress Dashboard
+              </h1>
+              <AIStatusBadge />
+              <TapasAIButton />
+            </div>
             <motion.p
               className="text-base sm:text-lg text-gray-600 max-w-2xl"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              Track your productivity journey with gamified features and visual
-              insights
+              Track your productivity journey with gamified features and
+              AI-powered insights
             </motion.p>
+            <motion.div
+              className="mt-4"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+            >
+              <AITaskPlannerButton
+                variant="default"
+                size="sm"
+                onTasksCreated={(trackerId) => {
+                  console.log("New tracker created with AI:", trackerId);
+                  // You can add navigation logic here
+                }}
+              />
+            </motion.div>
           </motion.div>
         </div>
         <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
