@@ -1447,9 +1447,9 @@ class MultiGistSyncService {
    * Merge trackers with intelligent conflict resolution
    */
   private mergeTrackers(
-    local: Record<string, any>,
-    remote: Record<string, any>
-  ): Record<string, any> {
+    local: Record<string, Tracker>,
+    remote: Record<string, Tracker>
+  ): Record<string, Tracker> {
     const merged = { ...remote };
 
     Object.entries(local).forEach(([id, localTracker]) => {
@@ -1478,9 +1478,9 @@ class MultiGistSyncService {
    * Merge tracker groups with intelligent conflict resolution
    */
   private mergeTrackerGroups(
-    local: Record<string, any>,
-    remote: Record<string, any>
-  ): Record<string, any> {
+    local: Record<string, TrackerGroup>,
+    remote: Record<string, TrackerGroup>
+  ): Record<string, TrackerGroup> {
     const merged = { ...remote };
 
     Object.entries(local).forEach(([id, localGroup]) => {
@@ -1506,31 +1506,23 @@ class MultiGistSyncService {
   /**
    * Merge snapshots with intelligent conflict resolution
    */
-  private mergeSnapshots(local: any[], remote: any[]): any[] {
-    const merged = [...remote];
-    const remoteIds = new Set(remote.map((s) => s.id || s.date));
+  private mergeSnapshots(
+    local: DailySnapshot[],
+    remote: DailySnapshot[]
+  ): DailySnapshot[] {
+    const merged: DailySnapshot[] = [...remote];
+    const keyOf = (s: DailySnapshot) => `${s.date}:${s.trackerId}`;
+    const remoteKeys = new Set(remote.map((s) => keyOf(s)));
 
     local.forEach((localSnapshot) => {
-      const localId = localSnapshot.id || localSnapshot.date;
-      if (!remoteIds.has(localId)) {
+      const key = keyOf(localSnapshot);
+      if (!remoteKeys.has(key)) {
         merged.push(localSnapshot);
       } else {
-        // Both exist, use the more recent one
-        const remoteSnapshot = remote.find((r) => (r.id || r.date) === localId);
-        if (remoteSnapshot) {
-          const localTime = new Date(
-            localSnapshot.createdAt || localSnapshot.date || 0
-          ).getTime();
-          const remoteTime = new Date(
-            remoteSnapshot.createdAt || remoteSnapshot.date || 0
-          ).getTime();
-
-          if (localTime > remoteTime) {
-            const index = merged.findIndex((m) => (m.id || m.date) === localId);
-            if (index !== -1) {
-              merged[index] = localSnapshot;
-            }
-          }
+        const index = merged.findIndex((m) => keyOf(m) === key);
+        if (index !== -1) {
+          // Prefer local value on conflict
+          merged[index] = localSnapshot;
         }
       }
     });
