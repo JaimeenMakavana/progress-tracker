@@ -1,6 +1,6 @@
 "use client";
 
-import { SyncDebugger } from "../../components/sync";
+import { SyncDebugger, SyncStatusDebug } from "../../components/sync";
 
 export default function SyncDebugPage() {
   return (
@@ -16,7 +16,10 @@ export default function SyncDebugPage() {
             </p>
           </div>
 
-          <SyncDebugger />
+          <div className="space-y-6">
+            <SyncStatusDebug />
+            <SyncDebugger />
+          </div>
 
           <div className="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
             <h3 className="text-lg font-semibold text-blue-900 mb-2">
