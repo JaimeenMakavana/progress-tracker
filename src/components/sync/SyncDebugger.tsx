@@ -39,6 +39,10 @@ export function SyncDebugger() {
     }
   };
 
+  const getSyncStatus = () => {
+    return multiGistSync.getSyncStatus();
+  };
+
   const reauthenticate = async () => {
     try {
       await multiGistSync.authenticate();
@@ -145,6 +149,34 @@ export function SyncDebugger() {
                 <Badge variant="destructive">
                   <XCircle className="h-3 w-3 mr-1" />
                   Not Authenticated
+                </Badge>
+              )}
+            </div>
+
+            {/* Quick Status */}
+            <div className="flex items-center gap-2">
+              <span className="font-medium">Quick Status:</span>
+              <Badge variant="outline" className="text-xs">
+                {getSyncStatus().gistCount} gists configured
+              </Badge>
+              {getSyncStatus().lastSyncTime && (
+                <Badge variant="outline" className="text-xs">
+                  Last sync:{" "}
+                  {new Date(getSyncStatus().lastSyncTime!).toLocaleString()}
+                </Badge>
+              )}
+              {getSyncStatus().lastSyncStatus && (
+                <Badge
+                  variant="outline"
+                  className={`text-xs ${
+                    getSyncStatus().lastSyncStatus === "success"
+                      ? "text-green-600"
+                      : getSyncStatus().lastSyncStatus === "failed"
+                      ? "text-red-600"
+                      : "text-gray-600"
+                  }`}
+                >
+                  Status: {getSyncStatus().lastSyncStatus}
                 </Badge>
               )}
             </div>

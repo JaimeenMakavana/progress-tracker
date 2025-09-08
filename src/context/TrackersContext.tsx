@@ -539,14 +539,27 @@ export function TrackersProvider({ children }: { children: React.ReactNode }) {
   // GitHub Sync methods
   const syncWithGitHub = async () => {
     try {
-      const result = await multiGistSync.syncAppState(state);
+      console.log("🔄 Starting GitHub sync from TrackersContext...");
+
+      // Check if sync is needed
+      if (!multiGistSync.isSyncNeeded()) {
+        console.log("⏭️ Sync not needed, skipping...");
+        return { success: true };
+      }
+
+      // Use retry logic for more reliable sync
+      const result = await multiGistSync.forceSyncWithRetry(state, 3);
+
       if (result.success && result.mergedAppState) {
+        console.log("✅ Sync successful, updating local state...");
         setState(updateAppMeta(result.mergedAppState));
         return { success: true };
       } else {
+        console.error("❌ Sync failed:", result.error);
         return { success: false, error: result.error };
       }
     } catch (error) {
+      console.error("❌ Sync error:", error);
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",

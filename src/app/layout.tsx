@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { TrackersProvider } from "../context/TrackersContext";
+import AutoSyncMount from "./AutoSyncMount";
 import { TransactionsProvider } from "../context/TransactionsContext";
 import { Navigation } from "../components";
 
@@ -37,6 +38,7 @@ export default function RootLayout({
                 <Navigation />
               </div>
               <div className="h-full flex-1 overflow-y-auto p-2 sm:p-4 md:pl-0">
+                <AutoSyncMount />
                 {children}
               </div>
             </div>

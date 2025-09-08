@@ -642,16 +642,103 @@ class MultiGistSyncService {
     gistCount: number;
     missingGists: string[];
     gistIds: Record<string, string>;
+    lastSyncTime?: string;
+    lastSyncStatus?: string;
   } {
     const missingGists = Object.keys(this.GIST_CONFIGS).filter(
       (type) => !this.gistIds[type]
     );
+
+    let lastSyncTime: string | undefined;
+    let lastSyncStatus: string | undefined;
+
+    if (typeof window !== "undefined") {
+      lastSyncTime = localStorage.getItem("last_sync_time") || undefined;
+      lastSyncStatus = localStorage.getItem("last_sync_status") || undefined;
+    }
 
     return {
       isAuthenticated: this.isAuthenticated(),
       gistCount: Object.keys(this.gistIds).length,
       missingGists,
       gistIds: { ...this.gistIds },
+      lastSyncTime,
+      lastSyncStatus,
+    };
+  }
+
+  /**
+   * Check if sync is needed based on last sync time
+   */
+  isSyncNeeded(): boolean {
+    if (typeof window === "undefined") return false;
+
+    const lastSyncTime = localStorage.getItem("last_sync_time");
+    if (!lastSyncTime) return true;
+
+    const lastSync = new Date(lastSyncTime);
+    const now = new Date();
+    const timeDiff = now.getTime() - lastSync.getTime();
+
+    // Sync if more than 5 minutes have passed
+    return timeDiff > 5 * 60 * 1000;
+  }
+
+  /**
+   * Force sync with retry logic
+   */
+  async forceSyncWithRetry(
+    localAppState: AppState,
+    maxRetries: number = 3
+  ): Promise<{
+    success: boolean;
+    mergedAppState?: AppState;
+    error?: string;
+    attempts: number;
+  }> {
+    let lastError: string | undefined;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      console.log(`🔄 Sync attempt ${attempt}/${maxRetries}`);
+
+      try {
+        const result = await this.syncAppState(localAppState);
+
+        if (result.success) {
+          console.log(`✅ Sync successful on attempt ${attempt}`);
+          return {
+            success: true,
+            mergedAppState: result.mergedAppState,
+            attempts: attempt,
+          };
+        } else {
+          lastError = result.error;
+          console.error(`❌ Sync failed on attempt ${attempt}:`, result.error);
+
+          // Wait before retry (exponential backoff)
+          if (attempt < maxRetries) {
+            const waitTime = Math.pow(2, attempt) * 1000; // 2s, 4s, 8s...
+            console.log(`⏳ Waiting ${waitTime}ms before retry...`);
+            await new Promise((resolve) => setTimeout(resolve, waitTime));
+          }
+        }
+      } catch (error) {
+        lastError = error instanceof Error ? error.message : "Unknown error";
+        console.error(`❌ Sync error on attempt ${attempt}:`, lastError);
+
+        if (attempt < maxRetries) {
+          const waitTime = Math.pow(2, attempt) * 1000;
+          console.log(`⏳ Waiting ${waitTime}ms before retry...`);
+          await new Promise((resolve) => setTimeout(resolve, waitTime));
+        }
+      }
+    }
+
+    console.error(`❌ All ${maxRetries} sync attempts failed`);
+    return {
+      success: false,
+      error: lastError,
+      attempts: maxRetries,
     };
   }
 
@@ -1166,11 +1253,15 @@ class MultiGistSyncService {
     };
     error?: string;
   }> {
-    console.log("Starting full app state sync...");
+    console.log("🔄 Starting full app state sync...");
+
+    // Store sync start time
+    const syncStartTime = new Date().toISOString();
 
     // Ensure all gists exist before attempting sync
     const gistsReady = await this.ensureAllGistsExist();
     if (!gistsReady) {
+      console.error("❌ Failed to create required gists");
       return {
         success: false,
         results: {
@@ -1191,7 +1282,7 @@ class MultiGistSyncService {
 
     try {
       // Step 1: Download remote data
-      console.log("Step 1: Downloading remote data...");
+      console.log("📥 Step 1: Downloading remote data...");
       const downloadResult = await this.downloadFullAppState();
       results.download = {
         success: downloadResult.success,
@@ -1199,7 +1290,7 @@ class MultiGistSyncService {
       };
 
       if (!downloadResult.success) {
-        console.error("Download failed, proceeding with local data only");
+        console.error("❌ Download failed, proceeding with local data only");
         console.error("Download error details:", downloadResult.error);
         console.error("Individual gist results:", downloadResult.results);
 
@@ -1211,17 +1302,19 @@ class MultiGistSyncService {
             console.log(`✅ ${gistType} download successful`);
           }
         });
+      } else {
+        console.log("✅ Remote data downloaded successfully");
       }
 
       // Step 2: Merge local and remote data
-      console.log("Step 2: Merging local and remote data...");
+      console.log("🔄 Step 2: Merging local and remote data...");
       const mergedAppState =
         downloadResult.success && downloadResult.appState
           ? this.mergeLocalAndRemoteData(localAppState, downloadResult.appState)
           : localAppState;
 
       // Step 3: Upload merged data
-      console.log("Step 3: Uploading merged data...");
+      console.log("📤 Step 3: Uploading merged data...");
       const uploadResult = await this.uploadFullAppState(mergedAppState);
       results.upload = {
         success: uploadResult.success,
@@ -1229,14 +1322,21 @@ class MultiGistSyncService {
       };
 
       if (uploadResult.success) {
-        console.log("Full app state sync completed successfully");
+        console.log("✅ Full app state sync completed successfully");
+
+        // Store sync success timestamp
+        if (typeof window !== "undefined") {
+          localStorage.setItem("last_sync_time", syncStartTime);
+          localStorage.setItem("last_sync_status", "success");
+        }
+
         return {
           success: true,
           mergedAppState,
           results,
         };
       } else {
-        console.error("Full app state sync failed:", uploadResult.error);
+        console.error("❌ Full app state sync failed:", uploadResult.error);
         console.error("Upload error details:", uploadResult.error);
         console.error("Individual upload results:", uploadResult.results);
 
@@ -1249,6 +1349,12 @@ class MultiGistSyncService {
           }
         });
 
+        // Store sync failure timestamp
+        if (typeof window !== "undefined") {
+          localStorage.setItem("last_sync_time", syncStartTime);
+          localStorage.setItem("last_sync_status", "failed");
+        }
+
         return {
           success: false,
           mergedAppState,
@@ -1257,7 +1363,14 @@ class MultiGistSyncService {
         };
       }
     } catch (error) {
-      console.error("Error during app state sync:", error);
+      console.error("❌ Error during app state sync:", error);
+
+      // Store sync error timestamp
+      if (typeof window !== "undefined") {
+        localStorage.setItem("last_sync_time", syncStartTime);
+        localStorage.setItem("last_sync_status", "error");
+      }
+
       return {
         success: false,
         results,
@@ -1267,26 +1380,28 @@ class MultiGistSyncService {
   }
 
   /**
-   * Merge local and remote app state data
+   * Merge local and remote app state data with intelligent conflict resolution
    */
   private mergeLocalAndRemoteData(local: AppState, remote: AppState): AppState {
     console.log("Merging local and remote app state data...");
 
-    // For now, we'll use a simple strategy: local data takes precedence
-    // In a more sophisticated implementation, you might want to:
-    // - Merge arrays (todos, snapshots) by ID
-    // - Use timestamps to determine which data is newer
-    // - Handle conflicts more intelligently
+    // Get timestamps for conflict resolution
+    const localTime = new Date(local.appMeta?.lastUpdated || 0).getTime();
+    const remoteTime = new Date(remote.appMeta?.lastUpdated || 0).getTime();
+    const isLocalNewer = localTime > remoteTime;
+
+    console.log(`Local last updated: ${local.appMeta?.lastUpdated}`);
+    console.log(`Remote last updated: ${remote.appMeta?.lastUpdated}`);
+    console.log(`Using ${isLocalNewer ? "local" : "remote"} as base`);
 
     const merged: AppState = {
-      // Use local data as base, but merge in remote data where local is empty
-      appMeta: local.appMeta ||
-        remote.appMeta || {
-          version: "2.0.0",
-          lastUpdated: new Date().toISOString(),
-        },
-      trackers: { ...remote.trackers, ...local.trackers },
-      trackerGroups: { ...remote.trackerGroups, ...local.trackerGroups },
+      // Use the more recent appMeta as base
+      appMeta: isLocalNewer ? local.appMeta : remote.appMeta,
+      trackers: this.mergeTrackers(local.trackers || {}, remote.trackers || {}),
+      trackerGroups: this.mergeTrackerGroups(
+        local.trackerGroups || {},
+        remote.trackerGroups || {}
+      ),
       challenges: { ...remote.challenges, ...local.challenges },
       globalAchievements: {
         ...remote.globalAchievements,
@@ -1305,17 +1420,121 @@ class MultiGistSyncService {
         remote.todoAchievements || [],
         "id"
       ),
-      snapshots: local.snapshots || remote.snapshots || [],
+      snapshots: this.mergeSnapshots(
+        local.snapshots || [],
+        remote.snapshots || []
+      ),
 
-      // For stats, use local if it exists, otherwise use remote
-      todoStats: local.todoStats || remote.todoStats,
+      // For stats, use the more recent one
+      todoStats: isLocalNewer ? local.todoStats : remote.todoStats,
 
-      // For objects, merge them
+      // For objects, merge them with local taking precedence
       quizItems: { ...remote.quizItems, ...local.quizItems },
       taskPages: { ...remote.taskPages, ...local.taskPages },
     };
 
+    // Update the merged timestamp
+    merged.appMeta = {
+      ...merged.appMeta,
+      lastUpdated: new Date().toISOString(),
+    };
+
     console.log("App state merge completed");
+    return merged;
+  }
+
+  /**
+   * Merge trackers with intelligent conflict resolution
+   */
+  private mergeTrackers(
+    local: Record<string, any>,
+    remote: Record<string, any>
+  ): Record<string, any> {
+    const merged = { ...remote };
+
+    Object.entries(local).forEach(([id, localTracker]) => {
+      const remoteTracker = remote[id];
+
+      if (!remoteTracker) {
+        // Local tracker doesn't exist remotely, add it
+        merged[id] = localTracker;
+      } else {
+        // Both exist, use the more recent one
+        const localTime = new Date(localTracker.updatedAt || 0).getTime();
+        const remoteTime = new Date(remoteTracker.updatedAt || 0).getTime();
+
+        if (localTime > remoteTime) {
+          merged[id] = localTracker;
+        } else {
+          merged[id] = remoteTracker;
+        }
+      }
+    });
+
+    return merged;
+  }
+
+  /**
+   * Merge tracker groups with intelligent conflict resolution
+   */
+  private mergeTrackerGroups(
+    local: Record<string, any>,
+    remote: Record<string, any>
+  ): Record<string, any> {
+    const merged = { ...remote };
+
+    Object.entries(local).forEach(([id, localGroup]) => {
+      const remoteGroup = remote[id];
+
+      if (!remoteGroup) {
+        merged[id] = localGroup;
+      } else {
+        const localTime = new Date(localGroup.updatedAt || 0).getTime();
+        const remoteTime = new Date(remoteGroup.updatedAt || 0).getTime();
+
+        if (localTime > remoteTime) {
+          merged[id] = localGroup;
+        } else {
+          merged[id] = remoteGroup;
+        }
+      }
+    });
+
+    return merged;
+  }
+
+  /**
+   * Merge snapshots with intelligent conflict resolution
+   */
+  private mergeSnapshots(local: any[], remote: any[]): any[] {
+    const merged = [...remote];
+    const remoteIds = new Set(remote.map((s) => s.id || s.date));
+
+    local.forEach((localSnapshot) => {
+      const localId = localSnapshot.id || localSnapshot.date;
+      if (!remoteIds.has(localId)) {
+        merged.push(localSnapshot);
+      } else {
+        // Both exist, use the more recent one
+        const remoteSnapshot = remote.find((r) => (r.id || r.date) === localId);
+        if (remoteSnapshot) {
+          const localTime = new Date(
+            localSnapshot.createdAt || localSnapshot.date || 0
+          ).getTime();
+          const remoteTime = new Date(
+            remoteSnapshot.createdAt || remoteSnapshot.date || 0
+          ).getTime();
+
+          if (localTime > remoteTime) {
+            const index = merged.findIndex((m) => (m.id || m.date) === localId);
+            if (index !== -1) {
+              merged[index] = localSnapshot;
+            }
+          }
+        }
+      }
+    });
+
     return merged;
   }
 

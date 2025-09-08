@@ -25,6 +25,7 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
+  const [lastSyncStatus, setLastSyncStatus] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
@@ -36,9 +37,11 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
         const userInfo = await getGitHubUser();
         setUser(userInfo);
 
-        // Load last sync time from localStorage
+        // Load last sync time and status from localStorage
         const lastSync = localStorage.getItem("last_sync_time");
+        const lastStatus = localStorage.getItem("last_sync_status");
         setLastSyncTime(lastSync);
+        setLastSyncStatus(lastStatus);
       }
     };
 
@@ -58,7 +61,9 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
     setIsConnected(false);
     setUser(null);
     setLastSyncTime(null);
+    setLastSyncStatus(null);
     localStorage.removeItem("last_sync_time");
+    localStorage.removeItem("last_sync_status");
     setShowUserMenu(false);
   };
 
@@ -72,15 +77,19 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
       if (result.success) {
         const now = new Date().toLocaleString();
         setLastSyncTime(now);
+        setLastSyncStatus("success");
         localStorage.setItem("last_sync_time", now);
+        localStorage.setItem("last_sync_status", "success");
 
         // Show success state briefly
         setShowSuccess(true);
         setTimeout(() => setShowSuccess(false), 2000);
 
-        console.log("Sync successful");
+        console.log("✅ Sync successful");
       } else {
-        console.error("Sync failed:", result.error);
+        console.error("❌ Sync failed:", result.error);
+        setLastSyncStatus("failed");
+        localStorage.setItem("last_sync_status", "failed");
         // Show error message (you could add a toast notification here)
       }
     } catch (error) {
@@ -136,7 +145,7 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
           showSuccess
             ? "Sync completed successfully!"
             : lastSyncTime
-            ? `Last synced: ${lastSyncTime}`
+            ? `Last synced: ${lastSyncTime} (${lastSyncStatus || "unknown"})`
             : "Sync with GitHub"
         }
       >
@@ -163,7 +172,9 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
           disabled={isSyncing}
           className="gap-2 px-6 py-3 bg-white border-2 border-[#2C3930] text-[#2C3930] hover:bg-[#2C3930] hover:text-white whitespace-nowrap h-12 transition-all"
           title={
-            lastSyncTime ? `Last synced: ${lastSyncTime}` : "Sync with GitHub"
+            lastSyncTime
+              ? `Last synced: ${lastSyncTime} (${lastSyncStatus || "unknown"})`
+              : "Sync with GitHub"
           }
         >
           {isSyncing ? (
@@ -229,6 +240,19 @@ export default function SyncButton({ className = "" }: SyncButtonProps) {
             {lastSyncTime && (
               <div className="px-3 py-2 text-sm text-gray-600">
                 Last synced: {lastSyncTime}
+                {lastSyncStatus && (
+                  <span
+                    className={`ml-2 px-2 py-1 rounded text-xs ${
+                      lastSyncStatus === "success"
+                        ? "bg-green-100 text-green-800"
+                        : lastSyncStatus === "failed"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    {lastSyncStatus}
+                  </span>
+                )}
               </div>
             )}
 
