@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Plus, Search, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { AITaskPlannerIconButton } from "../ai";
 
 interface SearchBarProps {
   searchQuery: string;
@@ -11,6 +12,7 @@ interface SearchBarProps {
   resultCount: number;
   hasSearchQuery: boolean;
   onCreateTracker: () => void;
+  onAITasksCreated?: (trackerId: string) => void;
 }
 
 export function SearchBar({
@@ -20,6 +22,7 @@ export function SearchBar({
   resultCount,
   hasSearchQuery,
   onCreateTracker,
+  onAITasksCreated,
 }: SearchBarProps) {
   return (
     <motion.div
@@ -55,8 +58,8 @@ export function SearchBar({
           )}
         </div>
 
-        {/* Results Counter and New Tracker Button */}
-        <div className="flex items-center gap-4">
+        {/* Results Counter and Action Buttons */}
+        <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-gray-100/50 rounded-xl">
             <div className="w-2 h-2 bg-[#2C3930] rounded-full"></div>
             <span className="text-sm font-medium text-gray-700">
@@ -65,6 +68,12 @@ export function SearchBar({
                 : `${resultCount} tracker${resultCount !== 1 ? "s" : ""}`}
             </span>
           </div>
+
+          {/* AI Task Planner Button */}
+          <AITaskPlannerIconButton
+            onTasksCreated={onAITasksCreated}
+            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 border-0"
+          />
 
           {/* New Tracker Button */}
           <Button

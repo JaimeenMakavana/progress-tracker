@@ -60,7 +60,11 @@ const defaultState: AppState = {
 interface TrackersContextType {
   state: AppState;
   isLoading: boolean;
-  createTracker: (data: { title: string; description?: string }) => string;
+  createTracker: (data: {
+    title: string;
+    description?: string;
+    initialTasks?: ImportTaskData[];
+  }) => string;
   updateTracker: (id: string, patch: Partial<Tracker>) => void;
   deleteTracker: (id: string) => void;
   addTask: (
@@ -196,8 +200,39 @@ export function TrackersProvider({ children }: { children: React.ReactNode }) {
     },
   });
 
-  const createTracker = (data: { title: string; description?: string }) => {
+  const createTracker = (data: {
+    title: string;
+    description?: string;
+    initialTasks?: ImportTaskData[];
+  }) => {
     const id = "t-" + uuid();
+
+    // Create tasks if initialTasks provided
+    const tasks: Record<string, Task> = {};
+    if (data.initialTasks && data.initialTasks.length > 0) {
+      data.initialTasks.forEach((taskData, index) => {
+        const taskId = "task-" + uuid();
+        const task: Task = {
+          id: taskId,
+          title: taskData.title,
+          desc: taskData.desc || taskData.description || "",
+          status: taskData.status || "todo",
+          effort: taskData.effort || 1,
+          tags: taskData.tags || [],
+          createdAt: taskData.createdAt || new Date().toISOString(),
+          startedAt: taskData.startedAt,
+          completedAt: taskData.completedAt,
+          notes: taskData.notes || [],
+          order: index + 1,
+          execution: taskData.execution,
+          mindset: taskData.mindset,
+          quizIds: taskData.quizIds || [],
+          reflectionPrompts: taskData.reflectionPrompts || [],
+        };
+        tasks[taskId] = task;
+      });
+    }
+
     const tracker: Tracker = {
       id,
       title: data.title,
@@ -205,7 +240,7 @@ export function TrackersProvider({ children }: { children: React.ReactNode }) {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       settings: { progressMethod: "weighted", weightField: "effort" },
-      tasks: {},
+      tasks,
       milestones: [],
       activityLog: [],
       templatesUsed: [],
